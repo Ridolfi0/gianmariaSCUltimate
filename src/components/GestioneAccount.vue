@@ -20,6 +20,7 @@ export default {
             newUserData: { name: "", surname: "", mail: "", password: "", role: "" },
             testoSceltaRuoli: "Filtra per ruoli",
             roleToFilter:"tutti"
+            // niko puzza
         }
     },
     methods: {
