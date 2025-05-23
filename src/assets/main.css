@@ -1,0 +1,69 @@
+
+@font-face {
+    font-family: Releway;
+    src: url("./Raleway.ttf");
+}
+
+body {
+    background: linear-gradient(90deg, #266874, #78c3ce);
+    font-family: Releway;
+}
+.unselectable{
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+i{
+    color: white;
+    font-size: 90px;
+}
+
+.btn-scelta {
+    background-color: transparent;
+    color: white;
+    border: none;
+    color: 266874;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 200px;
+    height: 220px;
+}
+
+.btn-scelta:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.btn-scelta:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(32, 201, 151, 0.5);
+}
+
+nav {
+    align-items: top;
+    align-content: top;
+    width: 100%;
+}
+
+#app{
+    display: flex;
+}
