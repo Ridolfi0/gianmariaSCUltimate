@@ -11,6 +11,7 @@ then
     return 0
 fi
 
+//wlekwhfbhqefq
 # Create Root Folder gas if not created
 if [ ! -d $GAS_DIR ]
 then
