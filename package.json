@@ -9,7 +9,7 @@
         "preview": "vite preview",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
         "format": "prettier --write src/",
-        "push": "clasp pull && npm run build && bash ./gas.sh && clasp push"
+        "push": "clasp pull && npm run build && bash ./gas.sh && clasp push" 
     },
     "dependencies": {
         "@google/clasp": "^2.4.2",
