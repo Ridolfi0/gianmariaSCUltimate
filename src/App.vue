@@ -6,8 +6,8 @@ import { Status } from './File_js/Options';
 import { CurrentUser } from './File_js/Options';
 import GestioneAccount from './components/GestioneAccount.vue';
 import EventsMain from './components/EventsMain.vue';
-import CreaEvento from './components/CreaEvento.vue';
-import ImportaEvento from './components/ImportaEvento.vue';
+import CreaEvento from './components/CreaImpegno.vue';
+import ImportaEvento from './components/ImportaImpegno.vue';
 import GestioneVerbali from './components/GestioneVerbali.vue';
 import VisualizzaProprioAccount from './components/VisualizzaProprioAccount.vue'
 import GestioneAmministrazione from './components/GestioneAmministrazione.vue'
