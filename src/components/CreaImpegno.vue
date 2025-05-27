@@ -16,27 +16,53 @@ export default {
     Cartelle: Object
   },
   data() {
-    return {
-      isLoading: false,
-      folderData: this.Cartelle,
-      text:""
+  return {
+    isLoading: false,
+    folderData: this.Cartelle,
+    text: "",
+    nome: "",
+    descrizione: "",
+    dataInizio: "",
+    dataFine: "",
+  }
+},
+methods: {
+  async onSubmit() {
+    this.isLoading = true;
+    this.text = "Sto caricando le cartelle...";
+    await this.dataTrasmission();
+    this.isLoading = false;
+  },
+  async dataTrasmission() {
+    this.text = "Sto creando l'impegno...";
+
+    // Prepara i dati da inviare come array (per esempio)
+    const dati = [[
+      this.nome,
+      this.descrizione,
+      this.dataInizio,
+      this.dataFine
+    ]];
+
+    try {
+      // Fai la POST request verso lo script Google Apps Script
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzpxozbMKly91xXvfgsm-n1a7p9RmgmFmKyQco58ly5Qb30B0LNkEppaHMe9HPQYsp0FA/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dati),
+      });
+
+      const result = await response.json();
+      if(result.status === "success"){
+        this.$emit('change-status', 'gestioneImpegni');
+      } else {
+        alert("Errore nel salvataggio dell'impegno");
+      }
+    } catch(e) {
+      alert("Errore di connessione: " + e.message);
     }
   },
-  methods: {
-    async onSubmit() {
-      this.isLoading = true;
-      this.text = "Sto caricando le cartelle..."
-      await this.dataTrasmission();
-      this.isLoading = false;
-    },
-    async dataTrasmission() {
-      let idCartelle = this.folderData
-      this.text = "Sto creando l'impegno..."
-      // Chiamata per la creazione di un nuovo impegno
-      //const esito = await loginInstance.transmitMinistageData(idTemplate1, idFolder, data, nrProg, nrMaxPren, db);
-      this.$emit('change-status', 'gestioenImpegni');
-    },
-  },
+},
   emits: ['change-status']
 }
 </script>
@@ -72,14 +98,14 @@ export default {
       <!-- comincia -->
       <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
         style="height: 90%; background-color: #78c3ce; width: 100vw;">
-        <form @submit.prevent="onSubmit()" class="fs-1 ms-5">
-        <!-- campi input-->
-         <input type="text" class="inputFilter form-control mb-3" placeholder="Nome impegno">
-         <input type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno">
-         <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno">
-         <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno">
-         <button type="submit" class="btn btn-primary" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
-        </form>
+        <form @submit.prevent="onSubmit" class="fs-1 ms-5">
+        <input v-model="nome" type="text" class="inputFilter form-control mb-3" placeholder="Nome impegno" required>
+        <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
+        <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
+        <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
+        <button type="submit" class="btn btn-primary" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
+</form>
+
       </div>
       <div class="containerC" v-else>
         <div class="cradle-wrap">
