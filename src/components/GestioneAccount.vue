@@ -11,7 +11,6 @@ import { ref } from 'vue'
 export default {
     data() {
         return {
-            // Lisa ti puzzano i piedi
             usersList: [],
             showModal: false,
             allUsers: [],
@@ -21,7 +20,6 @@ export default {
             newUserData: { name: "", surname: "", mail: "", password: "", role: "" },
             testoSceltaRuoli: "Filtra per ruoli",
             roleToFilter:"tutti"
-            // niko puzza
         }
     },
     methods: {
