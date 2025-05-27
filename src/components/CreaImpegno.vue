@@ -73,7 +73,12 @@ export default {
       <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
         style="height: 90%; background-color: #78c3ce; width: 100vw;">
         <form @submit.prevent="onSubmit()" class="fs-1 ms-5">
-            <h3>Vanno inseriti i campi di Input necessari</h3>
+        <!-- campi input-->
+         <input type="text" class="inputFilter form-control mb-3" placeholder="Nome impegno">
+         <input type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno">
+         <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno">
+         <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno">
+         <button type="submit" class="btn btn-primary se" id="btnFilter">Salva e aggiungi impegno</button>
         </form>
       </div>
       <div class="containerC" v-else>

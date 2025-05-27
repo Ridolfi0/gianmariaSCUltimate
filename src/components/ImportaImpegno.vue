@@ -73,7 +73,9 @@ export default {
       <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
         style="height: 90%; background-color: #78c3ce; width: 100vw;">
         <form @submit.prevent="onSubmit()" class="fs-1 ms-5">
-            <h3>Va inglobato il foglio Google con gli eventi da importare</h3>
+            <div class="container-fluid my-3">
+              <iframe src="https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472" style="height: 1000px;"></iframe>
+            </div>
         </form>
       </div>
       <div class="containerC" v-else>
@@ -165,7 +167,7 @@ p {
 }
 
 .circleArrow {
-  width: 40px;
+  width: 40px; 
   height: 40px;
 }
 
