@@ -78,7 +78,7 @@ export default {
          <input type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno">
          <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno">
          <input type="text" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno">
-         <button type="submit" class="btn btn-primary se" id="btnFilter">Salva e aggiungi impegno</button>
+         <button type="submit" class="btn btn-primary" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
         </form>
       </div>
       <div class="containerC" v-else>

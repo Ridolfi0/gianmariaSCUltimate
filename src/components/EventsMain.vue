@@ -1,260 +1,243 @@
-<script>
-
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-/* eslint-disable vue/no-mutating-props */
-
-import { useLoginStore } from '../stores/login'
-
-export default {
-    props: {
-        Ruolo:String,
-        Cartelle: Object
-    },
-    emits: ['change-status'],
-    data() {
-        return {
-            imageUrl: "https://cdn.jsdelivr.net/gh/DiegusFrosty/ImagesOpenDay@1247ca9/openday.png",
-            eventList: {},
-            isLoading: false,
-            folderData: this.Cartelle
-        }
-    },
-    async created() {
-        this.isLoading = true;
-        //const RecuperaEventi = useLoginStore();
-        //this.eventList = await RecuperaEventi.fetchEvents(this.folderData.file['DB_IMPEGNI']);
-        this.isLoading = false;
-    },
-    methods:{
-       
-    }
-}
-</script>
-
 <template>
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Gestione impegni</li>
-        </ol>
+    <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
+  <div class="fullscreen-wrapper">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav unselectable">
+      <ol class="breadcrumb">
+        <!-- cambia lo stato della pagina e lo mette ad home -->
+        <li class="breadcrumb-item"><a href="#" @click="$emit('change-status', 'home')">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Gestione impegni</li>
+      </ol>
     </nav>
-    <div class="sameLine">
-        <div class="circleArrow backArrow margin ms-3">
-            <i class="bi bi-arrow-left fs-3" @click="$emit('change-status', 'home')"></i>
-        </div>
+
+    <!-- freccia che torna indietro -->
+    <div class="d-flex align-items-center back-title mb-4">
+      <div class="circleArrow backArrow me-2">
+        <!-- cambia lo stato della pagina e lo mette ad home -->
+        <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'home')"></i>
+      </div>
+      <h3 class="title mb-0">Impegni</h3>
     </div>
-    <h3 class="title sameLine margin ms-1">Impegni</h3>
-    <div class="container">
-        <div class="containerC" v-if="this.isLoading">
-            <div class="cradle-wrap">
-                <div class="cradle">
-                    <div class="sphere"></div>
-                </div>
-            </div>
-            <div class="cradle-wrap">
-                <div class="cradle">
-                    <div class="sphere"></div>
-                </div>
-            </div>
-            <div class="cradle-wrap">
-                <div class="cradle">
-                    <div class="sphere"></div>
-                </div>
+
+    <div v-if="isLoading" class="loader-fullscreen">
+      <div class="cradle-wrap" v-for="n in 3" :key="n">
+        <div class="cradle"><div class="sphere"></div></div>
+      </div>
+    </div>
+
+    <!-- bottone per aggiornare solo la tabella con le modifiche -->
+    <div v-else class="content-area">
+      <div class="table-section">
+        <div class="refresh-wrapper">
+            <div class="circle btnAddEvent mb-3"  @click="fetchData">
+                <i class="bi bi-arrow-clockwise small-icon me-1"></i>
             </div>
         </div>
 
-        <h3>Visualizzo una tabella degli impegni</h3>
-        <div>
-            <div class="circle btnAddEvent margin ms-4" v-if="!this.isLoading && this.Ruolo !== 'viewer'">
-                <i class="bi bi-plus" @click="$emit('change-status', 'creaEvento')"></i>
-            </div>
-            <div class="circle btnAddEvent margin ms-4" v-if="!this.isLoading && this.Ruolo !== 'viewer'">
-                <i class="bi bi-upload" @click="$emit('change-status', 'importaEvento')"></i>
-            </div>
+        <!-- tabella collegata al foglio google -->
+        <div class="table-container">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, index) in tableData" :key="index">
+                <td v-for="(value, key) in row" :key="key">{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+
+      <!-- bottoni per aggiungere e caricare impegni -->
+      <div class="button-panel" v-if="Ruolo !== 'viewer'">
+        <div class="circle btnAddEvent mb-3" @click="$emit('change-status', 'creaEvento')">
+          <i class="bi bi-plus small-icon"></i>
+        </div>
+        <div class="circle btnAddEvent" @click="$emit('change-status', 'importaEvento')">
+          <i class="bi bi-upload small-icon"></i>
+        </div>
+      </div>
     </div>
-    <!-- colors
-    #78c3ce  #55a0a1  #266874  #21575f  #1c454a  #11282d -->
+  </div>
 </template>
 
+<script>
+export default {
+  props: {
+    // richiama la proprietà dal padre al figlio 
+    Ruolo: String,
+    Cartelle: Object,
+  },
+  emits: ['change-status'],
+  data() {
+    return {
+      tableData: [],
+      isLoading: true,
+    };
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    // chiamata per collegare e leggere il foglio google 
+    async fetchData() {
+      this.isLoading = true;
+      try {
+        const response = await fetch(
+          "https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni"
+        );
+        // collega la tabella a quella del foglio google 
+        this.tableData = await response.json();
+      } catch (error) {
+        console.error("Errore nel caricamento dati:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
+};
+</script>
+
 <style scoped>
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.fullscreen-wrapper {
+  padding: 2rem;
 }
 
-.containerC {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.breadcrumb-nav {
+  margin-bottom: 1rem;
+}
+
+.back-title {
+  margin-bottom: 1rem;
 }
 
 .title {
-    color: #ffffff;
+  color: #266874;
 }
 
-.sameLine {
-    display: inline-block;
+.loader-fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.content-area {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.table-section {
+  flex: 2;
+}
+
+.refresh-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  background-color: #fff;
+  width: 100%;
+}
+
+.button-panel {
+  flex: 0 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .circle {
-    width: 100px;
-    height: 100px;
+  width: 60px;
+  height: 60px;
+  background-color: #266874;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.circle, .circleArrow{
-    background-color: #266874;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 150px;
+.circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .circleArrow {
-    width: 40px;
-    height: 40px;
-}
-
-.backArrow {
-    border-width: 40px;
-    border-radius: 50px;
+  width: 40px;
+  height: 40px;
+  background-color: #266874;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
 }
 
 .backArrow:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: white;
-    transition: transform 0.2s, box-shadow 0.2s;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-img {
-    border-radius: 8%;
-}
-
-.card {
-    background-color: #55a0a1;
-    border-radius: 8%;
-}
-
-.card-title,
-.card-text {
-    color: #fff;
-}
-
-.btnViewDetails {
-    background-color: #266874;
-    color: #fff;
-}
-
-.btnAddEvent:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: white;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-
-.containerC {
-    width: 350px;
-    margin: 100px auto;
-
-    &:hover {
-        cursor: pointer;
-
-        .cradle-wrap {
-            .sphere {
-                background: #11282d;
-            }
-
-            &:first-child {
-                transform: rotate(120deg);
-
-                .sphere {
-                    background: #11282d;
-                }
-            }
-
-            &:last-child {
-                transform: rotate(240deg);
-
-                .sphere {
-                    background: #11282d;
-                }
-            }
-        }
-    }
+.small-icon {
+  font-size: 25px;
 }
 
 .cradle-wrap {
-    position: absolute;
-
-    &:first-child {
-        transform: rotate(120deg);
-    }
-
-    &:last-child {
-        transform: rotate(240deg);
-    }
+  position: relative;
+  animation: turn 3s linear infinite;
 }
-
 .cradle {
-    margin: 0 auto;
-    width: 125px;
-    height: 50px;
-    position: relative;
-    animation-name: turn;
-    animation-duration: 3s;
-    animation-timing-function: linear;
-    animation-delay: 0;
-    animation-iteration-count: infinite;
+  margin: 0 auto;
+  width: 125px;
+  height: 50px;
+  position: relative;
 }
-
 .sphere {
-    background: #266874;
-    width: 10px;
-    height: 10px;
-    border-radius: 25px;
-    position: absolute;
-    top: 0px;
-    animation-name: slide;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;
-    animation-delay: 0;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    animation-play-state: running;
-    transition: background 0.3s ease;
+  background: #266874;
+  width: 10px;
+  height: 10px;
+  border-radius: 25px;
+  position: absolute;
+  top: 0px;
+  animation: slide 1s ease-in-out infinite alternate;
 }
 
 @keyframes slide {
-    0% {
-        left: 0px;
-        width: 40px;
-        height: 40px;
-        opacity: 1;
-    }
-
-    100% {
-        left: 70px;
-        top: 12px;
-        width: 25px;
-        height: 25px;
-        opacity: 0.2;
-    }
+  0% {
+    left: 0px;
+    width: 40px;
+    height: 40px;
+    opacity: 1;
+  }
+  100% {
+    left: 70px;
+    top: 12px;
+    width: 25px;
+    height: 25px;
+    opacity: 0.2;
+  }
 }
 
 @keyframes turn {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

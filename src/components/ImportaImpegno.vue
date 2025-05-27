@@ -66,38 +66,31 @@ export default {
 
   <!-- tutto -->
 
-  <div class="container-fluid adapt">
-    <div class="row" style="height: 100vh;">
-      <div class="col-2"></div>
-      <!-- comincia -->
-      <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
-        style="height: 90%; background-color: #78c3ce; width: 100vw;">
-        <form @submit.prevent="onSubmit()" class="fs-1 ms-5">
-            <div class="container-fluid my-3">
-              <iframe src="https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472" style="height: 1000px;"></iframe>
-            </div>
-        </form>
-      </div>
-      <div class="containerC" v-else>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
+<div class="container-fluid adapt" style="height: 100vh;">
+  <div class="row h-100 justify-content-center align-items-center">
+    
+    <div v-if="!isLoading" class="col-12 d-flex flex-column p-0 m-0" style="height: 100%; background-color: #78c3ce;">
+      <form @submit.prevent="onSubmit()" class="flex-grow-1 w-100 m-0 p-0">
+        <div class="tabellaImpegni h-100 w-100 m-0 p-0 d-flex justify-content-center align-items-center">
+          <iframe 
+            src="https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472" 
+            style="border: none; width: 100%; height: 100%;">
+          </iframe>
         </div>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
-        </div>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
-        </div>
-      </div>
-      <!-- <p class="fs-2 containerC">{{ this.text }}</p>-->
+      </form>
     </div>
+
+    <!-- loader -->
+    <div class="containerC" v-else>
+      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
+      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
+      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
+    </div>
+
   </div>
+</div>
+
+
 </template>
 
 <style scoped>
@@ -297,4 +290,21 @@ p {
     transform: rotate(360deg);
   }
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+.tabellaImpegni {
+  margin: 0;
+  padding: 0;
+}
+
 </style>
