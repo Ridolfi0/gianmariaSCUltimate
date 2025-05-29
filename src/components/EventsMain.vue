@@ -1,11 +1,11 @@
 <template>
     <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
   <div class="fullscreen-wrapper">
-    <nav aria-label="breadcrumb" class="breadcrumb-nav unselectable">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
       <ol class="breadcrumb">
         <!-- cambia lo stato della pagina e lo mette ad home -->
-        <li class="breadcrumb-item"><a href="#" @click="$emit('change-status', 'home')">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Gestione impegni</li>
+        <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Gestione impegni</li>
       </ol>
     </nav>
 

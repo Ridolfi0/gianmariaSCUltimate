@@ -35,24 +35,34 @@ methods: {
   },
   async dataTrasmission() {
     this.text = "Sto creando l'impegno...";
-
+    console.log("1");  
     // Prepara i dati da inviare come array (per esempio)
-    const dati = [[
+    const dati = [
       this.nome,
       this.descrizione,
       this.dataInizio,
       this.dataFine
-    ]];
+    ];
 
+    console.log("2Dati da inviare:", dati);
     try {
       // Fai la POST request verso lo script Google Apps Script
-      const response = await fetch('https://script.google.com/macros/s/AKfycbzpxozbMKly91xXvfgsm-n1a7p9RmgmFmKyQco58ly5Qb30B0LNkEppaHMe9HPQYsp0FA/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dati),
-      });
+      console.log("primaDati da inviare:", dati);
+      const response = await fetch('https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ 
+    nome: this.nome,
+    descrizione: this.descrizione,
+    dataInizio: this.dataInizio,
+    dataFine: this.dataFine 
+  })
+});
 
-      const result = await response.json();
+console.log("dopoDati da inviare:", dati);
+      const result = await response/*.json()*/;
+      console.log("result " + response);
+      console.dir(result);
       if(result.status === "success"){
         this.$emit('change-status', 'gestioneImpegni');
       } else {
@@ -61,6 +71,7 @@ methods: {
     } catch(e) {
       alert("Errore di connessione: " + e.message);
     }
+    console.log("liwhhgfi32rhmDati da inviare:", dati);
   },
 },
   emits: ['change-status']
@@ -103,7 +114,7 @@ methods: {
         <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
         <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
         <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
-        <button type="submit" class="btn btn-primary" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
+        <button type="submit" class="btn btn-primary" id="btnSalvaImpegno" @click="dataTrasmission()">Salva e aggiungi impegno</button>
 </form>
 
       </div>
