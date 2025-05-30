@@ -15,7 +15,7 @@
         <!-- cambia lo stato della pagina e lo mette ad home -->
         <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'home')"></i>
       </div>
-      <h3 class="title mb-0">Impegni</h3>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Impegni</li>
     </div>
 
     <div v-if="isLoading" class="loader-fullscreen">
