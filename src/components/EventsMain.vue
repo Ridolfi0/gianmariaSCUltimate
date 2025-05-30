@@ -1,3 +1,40 @@
+<script>
+export default {
+  props: {
+    // richiama la proprietà dal padre al figlio 
+    Ruolo: String,
+    Cartelle: Object,
+  },
+  emits: ['change-status'],
+  data() {
+    return {
+      tableData: [],
+      isLoading: true,
+    };
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    // chiamata per collegare e leggere il foglio google 
+    async fetchData() {
+      this.isLoading = true;
+      try {
+        const response = await fetch(
+          "https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni"
+        );
+        // collega la tabella a quella del foglio google 
+        this.tableData = await response.json();
+      } catch (error) {
+        console.error("Errore nel caricamento dati:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  }
+};
+</script>
+
 <template>
     <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
   <div class="fullscreen-wrapper">
@@ -62,43 +99,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    // richiama la proprietà dal padre al figlio 
-    Ruolo: String,
-    Cartelle: Object,
-  },
-  emits: ['change-status'],
-  data() {
-    return {
-      tableData: [],
-      isLoading: true,
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    // chiamata per collegare e leggere il foglio google 
-    async fetchData() {
-      this.isLoading = true;
-      try {
-        const response = await fetch(
-          "https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni"
-        );
-        // collega la tabella a quella del foglio google 
-        this.tableData = await response.json();
-      } catch (error) {
-        console.error("Errore nel caricamento dati:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
-  },
-};
-</script>
 
 <style scoped>
 .fullscreen-wrapper {

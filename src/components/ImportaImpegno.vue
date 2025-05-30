@@ -1,15 +1,4 @@
 <script>
-
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-/* eslint-disable vue/require-v-for-key */
-/* eslint-disable no-prototype-builtins */
-
-//cork cork cork cork cork cork cork cork cork
-
-import { useLoginStore } from '../stores/login'
-import { ref } from 'vue'
-
 export default {
   props: {
     eventType: Object,
@@ -19,44 +8,69 @@ export default {
     return {
       isLoading: false,
       folderData: this.Cartelle,
-      text:""
+      text: "",
+      tableData: [],
+      selectedRows: []  // per tenere traccia delle righe selezionate (opzionale)
     }
+  },
+  created() {
+    this.fetchData();
   },
   methods: {
     async onSubmit() {
       this.isLoading = true;
-      this.text = "Sto caricando le cartelle..."
-      //await this.dataTrasmission();
+      this.text = "Sto caricando le cartelle...";
+      // await this.dataTrasmission();
       this.isLoading = false;
     },
     async dataTrasmission() {
-      let idCartelle = this.folderData
-      this.text = "Sto creando l'impegno..."
-      // Chiamata per la creazione di un nuovo impegno
-      //const esito = await loginInstance.transmitMinistageData(idTemplate1, idFolder, data, nrProg, nrMaxPren, db);
-      this.$emit('change-status', 'gestioenImpegni');
+      let idCartelle = this.folderData;
+      this.text = "Sto creando l'impegno...";
+      // qui puoi gestire i dati selezionati o altro
+      this.$emit('change-status', 'gestioneImpegni');
     },
+    async fetchData() {
+      this.isLoading = true;
+      try {
+        const response = await fetch(
+          "https://opensheet.elk.sh/1FOIfb0XxLcvhPtgCHE04M0ny9HZeRuZrd7x9A2nhbJ4/Foglio1"
+        );
+        this.tableData = await response.json();
+      } catch (error) {
+        console.error("Errore nel caricamento dati:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    toggleRowSelection(index) {
+      const pos = this.selectedRows.indexOf(index);
+      if (pos === -1) {
+        this.selectedRows.push(index);
+      } else {
+        this.selectedRows.splice(pos, 1);
+      }
+    },
+    isRowSelected(index) {
+      return this.selectedRows.includes(index);
+    }
   },
   emits: ['change-status']
 }
 </script>
 
 <template>
-
   <!-- breadcrumb -->
-
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
+      <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #fff">
+        <a href="#" style="color: #fff" @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a>
       </li>
-      <li class="breadcrumb-item active" aria-current="page" style="color: #fff"><a href="#" style="color: #fff"
-          @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a></li>
       <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Importa Impegno</li>
     </ol>
   </nav>
 
   <!-- caption crea(evento) -->
-
   <div class="inLine">
     <div class="circleArrow backArrow margin ms-3">
       <i class="bi bi-arrow-left fs-3" @click="$emit('change-status', 'gestioneImpegni')"></i>
@@ -64,33 +78,46 @@ export default {
     <p class="fs-2 mx-2" style="color: white;">Importa Impegno</p>
   </div>
 
-  <!-- tutto -->
+  <div class="container-fluid adapt" style="height: 100vh;">
+      <div v-if="!isLoading" class="col-12 d-flex flex-column p-0 m-0" style="height: 100%; background-color: #78c3ce;">
+        <form @submit.prevent="onSubmit()" class="flex-grow-1 w-100 m-0 p-0">
+            <div class="table-container">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
+                    <th>Seleziona</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableData" :key="index">
+                    <td v-for="(value, key) in row" :key="key">{{ value }}</td>
+                    <td>
+                      <input 
+                        type="checkbox" 
+                        :checked="isRowSelected(index)" 
+                        @change="toggleRowSelection(index)" 
+                        style="width: 18px; height: 18px; cursor: pointer;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="circle btnAddEvent" @click="$emit('change-status', 'importaEvento')">
+              <i class="bi bi-upload small-icon"></i>
+            </div>
+        </form>
+      </div>
 
-<div class="container-fluid adapt" style="height: 100vh;">
-  <div class="row h-100 justify-content-center align-items-center">
-    
-    <div v-if="!isLoading" class="col-12 d-flex flex-column p-0 m-0" style="height: 100%; background-color: #78c3ce;">
-      <form @submit.prevent="onSubmit()" class="flex-grow-1 w-100 m-0 p-0">
-        <div class="tabellaImpegni h-100 w-100 m-0 p-0 d-flex justify-content-center align-items-center">
-          <iframe 
-            src="https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472" 
-            style="border: none; width: 100%; height: 100%;">
-          </iframe>
+      <!-- loader -->
+      <div class="containerC" v-else>
+        <div class="cradle-wrap" v-for="n in 3" :key="n">
+          <div class="cradle"><div class="sphere"></div></div>
         </div>
-      </form>
+      </div>
+
     </div>
-
-    <!-- loader -->
-    <div class="containerC" v-else>
-      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
-      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
-      <div class="cradle-wrap"><div class="cradle"><div class="sphere"></div></div></div>
-    </div>
-
-  </div>
-</div>
-
-
 </template>
 
 <style scoped>
@@ -143,20 +170,27 @@ p {
   background-color: #21575f;
 }
 
-.circle {
-  width: 100px;
-  height: 100px;
-}
 
-.circle,
-.circleArrow {
+.circle {
+  width: 60px;
+  height: 60px;
   background-color: #266874;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  font-size: 150px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.small-icon {
+  font-size: 25px;
 }
 
 .circleArrow {

@@ -9,6 +9,7 @@
 
 import { useLoginStore } from '../stores/login'
 import { ref } from 'vue'
+import { request } from '../utils'
 
 export default {
   props: {
@@ -35,44 +36,20 @@ methods: {
   },
   async dataTrasmission() {
     this.text = "Sto creando l'impegno...";
-    console.log("1");  
-    // Prepara i dati da inviare come array (per esempio)
-    const dati = [
-      this.nome,
-      this.descrizione,
-      this.dataInizio,
-      this.dataFine
-    ];
-
-    console.log("primaprima", dati);
+    const loginStore = useLoginStore(); // se necessario per organizzazione (può essere omesso se `request` è accessibile direttamente)
     try {
-      // Fai la POST request verso lo script Google Apps Script
-      console.log("prima:", dati);
-      const response = await fetch('https://script.google.com/macros/s/AKfycbzNwnBlE9m3gzWcBdNyt8EQZ4E7LQt7PvPbN_YnbpceCKFwKRXnuyqp4N9K3oAC--Lc2Q/exec', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ 
-    nome: this.nome,
-    descrizione: this.descrizione,
-    dataInizio: this.dataInizio,
-    dataFine: this.dataFine 
-  })
-});
-
-console.log("dopo", dati);
-      const result = await response/*.json()*/;
-      console.log("result " + response);
-      console.dir(result);
-      if(result.status === "success"){
+      const res = await loginStore.datiNuovoImpegno(this.nome, this.descrizione, this.dataInizio, this.dataFine);
+      // Supponiamo che il server ritorni { status: "success" } in caso di successo
+      if (res.status === "success") {
         this.$emit('change-status', 'gestioneImpegni');
       } else {
         alert("Errore nel salvataggio dell'impegno");
       }
-    } catch(e) {
+    } catch (e) {
       alert("Errore di connessione: " + e.message);
     }
-    console.log("fine", dati);
-  },
+
+  }
 },
   emits: ['change-status']
 }
@@ -114,7 +91,7 @@ console.log("dopo", dati);
         <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
         <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
         <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
-        <button type="submit" class="azzurro-button" id="btnSalvaImpegno" @click="dataTrasmission()">Salva e aggiungi impegno</button>
+        <button type="submit" class="azzurro-button" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
 </form>
 
       </div>
