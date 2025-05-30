@@ -47,7 +47,7 @@ export const useLoginStore = defineStore('login', () => {
 
   async function fetchAllUsers() {
 
-    const res = await request('returnAllUsers', {}) //payload è oggetto json
+    const res = await request('returnAllUsers', {}) //payload è oggetto json 
 
     return res
   }
@@ -80,7 +80,7 @@ export const useLoginStore = defineStore('login', () => {
     return res;
   }
 
-  //metodo per la clonazione dell'openDay
+  //metodo per la clonazione dell'openDay 
   async function transmitOpendayData(idTemplate, idFolderOpenday, date, currentTurn, startTime, prenotazioni, db, pres) {
 
     const payload = {
@@ -187,5 +187,16 @@ export const useLoginStore = defineStore('login', () => {
     return await request('getAllDates', payload);;
   }
 
-  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate }
+  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine)  
+  {
+    const payload = {
+      nome: nome,
+      descrizione: descrizione,
+      dataInizio: dataInizio,
+      dataFine: dataFine
+    }
+
+    return await request('creaImpegno', payload);
+  }
+  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno }
 })

@@ -36,13 +36,31 @@ iframe {
     </div>
     <div class="container-fluid my-3">
            <!-- <iframe :src="this.DbStudenti" style="height: 1000px;"></iframe> -->
-            <h3>Configurazione generale con link al DB</h3>
-            <h3>Operazioni di inzio anno:</h3>
-            <h3>Crea cartelle per verbali (cdc e dipartimenti)</h3>
-            <h3>Bottone di clear delle mailing list studenti</h3>
-            <h3>Bottone di clear delle mailing list docenti</h3>
-            <h3>Fill mailing list studenti</h3>
-            <h3>Fill mailing list docenti</h3> 
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <h3 style="margin: 0;">Gestione generale (link al database):</h3>
+            <a class="linkModelli" href="https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472" target="_blank" rel="noopener noreferrer">clicca qui</a>
+        </div>
+        <h4>Operazioni di inzio anno:</h4>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <h4>Crea cartelle per verbali (cdc e dipartimenti)</h4> 
+            <button class="azzurro-button">Crea</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <h4>Archivia i dati degli STUDENTI dell'anno precedente</h4> 
+            <button class="azzurro-button">Archivia</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <h4>Archivia i dati degli DOCENTI dell'anno precedente</h4> 
+            <button class="azzurro-button">Archivia</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <input v-model="nome" type="link" class="inputFilter form-control mb-3" placeholder="Inserisci i nuovi dati degli STUDENTI">
+            <button class="azzurro-button" >Aggiorna</button>
+        </div>
+         <div style="display: flex; align-items: center; gap: 8px;">
+            <input v-model="nome" type="link" class="inputFilter form-control mb-3" placeholder="Inserisci i nuovi dati dei DOCENTI">
+            <button class="azzurro-button">Aggiorna</button>
+        </div>
     </div>
 </template>
 
@@ -75,4 +93,44 @@ iframe {
     color: white;
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
+.linkModelli {
+    color: #000000;
+}
+
+input {
+  background-color: #266874;
+  color: #78c3ce;
+}
+
+input:focus {
+  background-color: #21575f;
+}
+
+.azzurro-button {
+  background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 159, 255, 0.25);
+  transition: all 0.25s ease;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.azzurro-button:hover {
+  background: linear-gradient(135deg,rgb(43, 56, 110) 0%,rgb(67, 112, 151) 100%);
+  box-shadow: 0 6px 14px rgba(0, 159, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.azzurro-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 3px 6px rgba(0, 159, 255, 0.3);
+}
+
 </style>

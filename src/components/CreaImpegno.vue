@@ -9,6 +9,7 @@
 
 import { useLoginStore } from '../stores/login'
 import { ref } from 'vue'
+import { request } from '../utils'
 
 export default {
   props: {
@@ -35,44 +36,20 @@ methods: {
   },
   async dataTrasmission() {
     this.text = "Sto creando l'impegno...";
-    console.log("1");  
-    // Prepara i dati da inviare come array (per esempio)
-    const dati = [
-      this.nome,
-      this.descrizione,
-      this.dataInizio,
-      this.dataFine
-    ];
-
-    console.log("2Dati da inviare:", dati);
+    const loginStore = useLoginStore(); // se necessario per organizzazione (può essere omesso se `request` è accessibile direttamente)
     try {
-      // Fai la POST request verso lo script Google Apps Script
-      console.log("primaDati da inviare:", dati);
-      const response = await fetch('https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ 
-    nome: this.nome,
-    descrizione: this.descrizione,
-    dataInizio: this.dataInizio,
-    dataFine: this.dataFine 
-  })
-});
-
-console.log("dopoDati da inviare:", dati);
-      const result = await response/*.json()*/;
-      console.log("result " + response);
-      console.dir(result);
-      if(result.status === "success"){
+      const res = await loginStore.datiNuovoImpegno(this.nome, this.descrizione, this.dataInizio, this.dataFine);
+      // Supponiamo che il server ritorni { status: "success" } in caso di successo
+      if (res.status === "success") {
         this.$emit('change-status', 'gestioneImpegni');
       } else {
         alert("Errore nel salvataggio dell'impegno");
       }
-    } catch(e) {
+    } catch (e) {
       alert("Errore di connessione: " + e.message);
     }
-    console.log("liwhhgfi32rhmDati da inviare:", dati);
-  },
+
+  }
 },
   emits: ['change-status']
 }
@@ -114,7 +91,7 @@ console.log("dopoDati da inviare:", dati);
         <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
         <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
         <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
-        <button type="submit" class="btn btn-primary" id="btnSalvaImpegno" @click="dataTrasmission()">Salva e aggiungi impegno</button>
+        <button type="submit" class="azzurro-button" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
 </form>
 
       </div>
@@ -309,6 +286,32 @@ p {
 .inputFilter,
 #btnFilter {
   float: left;
+}
+
+.azzurro-button {
+  background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 159, 255, 0.25);
+  transition: all 0.25s ease;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.azzurro-button:hover {
+  background: linear-gradient(135deg,rgb(43, 56, 110) 0%,rgb(67, 112, 151) 100%);
+  box-shadow: 0 6px 14px rgba(0, 159, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.azzurro-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 3px 6px rgba(0, 159, 255, 0.3);
 }
 
 @keyframes slide {
