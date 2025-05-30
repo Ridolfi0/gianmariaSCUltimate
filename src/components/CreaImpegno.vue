@@ -44,11 +44,11 @@ methods: {
       this.dataFine
     ];
 
-    console.log("2Dati da inviare:", dati);
+    console.log("primaprima", dati);
     try {
       // Fai la POST request verso lo script Google Apps Script
-      console.log("primaDati da inviare:", dati);
-      const response = await fetch('https://docs.google.com/spreadsheets/d/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/edit?gid=764931472#gid=764931472', {
+      console.log("prima:", dati);
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzNwnBlE9m3gzWcBdNyt8EQZ4E7LQt7PvPbN_YnbpceCKFwKRXnuyqp4N9K3oAC--Lc2Q/exec', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
@@ -59,7 +59,7 @@ methods: {
   })
 });
 
-console.log("dopoDati da inviare:", dati);
+console.log("dopo", dati);
       const result = await response/*.json()*/;
       console.log("result " + response);
       console.dir(result);
@@ -71,7 +71,7 @@ console.log("dopoDati da inviare:", dati);
     } catch(e) {
       alert("Errore di connessione: " + e.message);
     }
-    console.log("liwhhgfi32rhmDati da inviare:", dati);
+    console.log("fine", dati);
   },
 },
   emits: ['change-status']
@@ -114,7 +114,7 @@ console.log("dopoDati da inviare:", dati);
         <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
         <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
         <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
-        <button type="submit" class="btn btn-primary" id="btnSalvaImpegno" @click="dataTrasmission()">Salva e aggiungi impegno</button>
+        <button type="submit" class="azzurro-button" id="btnSalvaImpegno" @click="dataTrasmission()">Salva e aggiungi impegno</button>
 </form>
 
       </div>
@@ -309,6 +309,32 @@ p {
 .inputFilter,
 #btnFilter {
   float: left;
+}
+
+.azzurro-button {
+  background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 159, 255, 0.25);
+  transition: all 0.25s ease;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.azzurro-button:hover {
+  background: linear-gradient(135deg,rgb(43, 56, 110) 0%,rgb(67, 112, 151) 100%);
+  box-shadow: 0 6px 14px rgba(0, 159, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.azzurro-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 3px 6px rgba(0, 159, 255, 0.3);
 }
 
 @keyframes slide {

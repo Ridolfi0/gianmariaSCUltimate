@@ -160,11 +160,11 @@ export default {
         <input type="text" v-model="filter" class="inputFilter mx-3 sameLine" placeholder="Filtra per cognome"
             @input="filterUsers()" />
         <div class="dropdown margin ms-2 sameLine">
-            <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+            <a class="azzurro-button dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false" id="roleToFilter">
                 {{ this.testoSceltaRuoli }}
             </a>
-            <ul class="dropdown-menu">
+            <ul class="azzurro-button dropdown-menu">
                 <li><a class="dropdown-item" href="#" @click="setRole('admin')">Admin</a></li>
                 <li><a class="dropdown-item" href="#" @click="setRole('editor')">Editor</a></li>
                 <li><a class="dropdown-item" href="#" @click="setRole('viewer')">Viewer</a></li>
@@ -195,7 +195,7 @@ export default {
                         </div>
                         <h6>Ruolo:</h6>
                         <div class="dropdown margin ms-2 sameLine">
-                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            <a class="azzurro-button dropdown-menu" href="#" role="button"
                                 aria-expanded="false" id="role">
                                 Seleziona ruolo
                             </a>
@@ -384,7 +384,6 @@ button {
     border-radius: 25px;
     position: absolute;
     top: 0px;
-    animation-name: slide;
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
     animation-delay: 0;
@@ -399,21 +398,40 @@ button {
     float: left;
 }
 
-@keyframes slide {
-    0% {
-        left: 0px;
-        width: 40px;
-        height: 40px;
-        opacity: 1;
-    }
+.azzurro-button {
+  background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 159, 255, 0.25);
+  transition: all 0.25s ease;
+  letter-spacing: 0.04em;
+  user-select: none;
+  
+}
 
-    100% {
-        left: 70px;
-        top: 12px;
-        width: 25px;
-        height: 25px;
-        opacity: 0.2;
-    }
+
+.azzurro-button:hover {
+  background: linear-gradient(135deg,rgb(43, 56, 110) 0%,rgb(67, 112, 151) 100%);
+  box-shadow: 0 6px 14px rgba(0, 159, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.azzurro-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 3px 6px rgba(0, 159, 255, 0.3);
+}
+
+.dropdown-item {
+    color: #fff;
+}
+.dropdown-item:hover {
+    background-color: #49a1d4;
+    color: #000000;
 }
 
 @keyframes turn {
