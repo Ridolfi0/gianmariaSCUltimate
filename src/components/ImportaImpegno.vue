@@ -26,7 +26,7 @@ export default {
 },
     async dataTrasmission() {
   this.text = "Sto creando gli impegni selezionati...";
-   const loginStore = useLoginStore();
+  const loginStore = useLoginStore();
   try {
     for (let i = 0; i < this.selectedRows.length; i++) {
       const index = this.selectedRows[i];
@@ -40,7 +40,7 @@ export default {
         rowIndex: index + 2 // +2 perché array parte da 0 e riga 1 è intestazione
       };
 
-      const res = await loginStore.upLoadImpegno('uploadImpegni', payload); // il tuo endpoint
+      const res = await loginStore.upLoadImpegno(row.Titolo, row.Descrizione, row.dataOraInizio, row.dataOraFine, index + 2); // il tuo endpoint
       if (res.status !== "success") {
         console.warn("Errore durante il salvataggio dell'impegno:", payload.nome);
       }
