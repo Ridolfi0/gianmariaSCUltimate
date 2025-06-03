@@ -198,5 +198,19 @@ export const useLoginStore = defineStore('login', () => {
 
     return await request('creaImpegno', payload);
   }
-  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno }
-})
+
+  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex)  
+  {
+    const payload = {
+      nome: nome,
+      descrizione: descrizione,
+      dataInizio: dataInizio,
+      dataFine: dataFine,
+      rowIndex: rowIndex
+    }
+
+    return await request('upLoadImpegni', payload);
+  }
+
+  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno, upLoadImpegno }
+}) 

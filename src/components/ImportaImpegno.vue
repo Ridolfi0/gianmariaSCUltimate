@@ -1,4 +1,5 @@
 <script>
+import { useLoginStore } from '../stores/login'
 export default {
   props: {
     eventType: Object,
@@ -18,17 +19,39 @@ export default {
   },
   methods: {
     async onSubmit() {
-      this.isLoading = true;
-      this.text = "Sto caricando le cartelle...";
-      // await this.dataTrasmission();
-      this.isLoading = false;
-    },
+  this.isLoading = true;
+  this.text = "Sto caricando le cartelle...";
+  await this.dataTrasmission();
+  this.isLoading = false;
+},
     async dataTrasmission() {
-      let idCartelle = this.folderData;
-      this.text = "Sto creando l'impegno...";
-      // qui puoi gestire i dati selezionati o altro
-      this.$emit('change-status', 'gestioneImpegni');
-    },
+  this.text = "Sto creando gli impegni selezionati...";
+   const loginStore = useLoginStore();
+  try {
+    for (let i = 0; i < this.selectedRows.length; i++) {
+      const index = this.selectedRows[i];
+      const row = this.tableData[index];
+
+      const payload = {
+        nome: row.Titolo,
+        descrizione: row.Descrizione,
+        dataInizio: row.dataOraInizio,
+        dataFine: row.dataOraFine,
+        rowIndex: index + 2 // +2 perché array parte da 0 e riga 1 è intestazione
+      };
+
+      const res = await loginStore.upLoadImpegno('uploadImpegni', payload); // il tuo endpoint
+      if (res.status !== "success") {
+        console.warn("Errore durante il salvataggio dell'impegno:", payload.nome);
+      }
+    }
+
+    this.$emit('change-status', 'gestioneImpegni');
+
+  } catch (e) {
+    alert("Errore durante la creazione degli impegni: " + e.message);
+  }
+},
     async fetchData() {
       this.isLoading = true;
       try {
@@ -104,7 +127,7 @@ export default {
                 </tbody>
               </table>
             </div>
-            <div class="circle btnAddEvent" @click="$emit('change-status', 'importaEvento')">
+            <div class="circle btnUpLoadEvent" @click="onSubmit">
               <i class="bi bi-upload small-icon"></i>
             </div>
         </form>
