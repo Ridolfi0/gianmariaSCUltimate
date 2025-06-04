@@ -36,12 +36,13 @@ export default {
 </script>
 
 <template>
-    <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
+  <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
   <div class="fullscreen-wrapper">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
       <ol class="breadcrumb">
         <!-- cambia lo stato della pagina e lo mette ad home -->
-        <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a></li>
+        <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
+        </li>
         <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Gestione impegni</li>
       </ol>
     </nav>
@@ -52,12 +53,18 @@ export default {
         <!-- cambia lo stato della pagina e lo mette ad home -->
         <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'home')"></i>
       </div>
-      <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Impegni</li>
+      <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Impegni</li>
+        </ol>
+      </nav>
     </div>
 
     <div v-if="isLoading" class="loader-fullscreen">
       <div class="cradle-wrap" v-for="n in 3" :key="n">
-        <div class="cradle"><div class="sphere"></div></div>
+        <div class="cradle">
+          <div class="sphere"></div>
+        </div>
       </div>
     </div>
 
@@ -65,9 +72,9 @@ export default {
     <div v-else class="content-area">
       <div class="table-section">
         <div class="refresh-wrapper">
-            <div class="circle btnAddEvent mb-3"  @click="fetchData">
-                <i class="bi bi-arrow-clockwise small-icon me-1"></i>
-            </div>
+          <div class="circle btnAddEvent mb-3" @click="fetchData">
+            <i class="bi bi-arrow-clockwise small-icon me-1"></i>
+          </div>
         </div>
 
         <!-- tabella collegata al foglio google -->
@@ -200,12 +207,14 @@ export default {
   position: relative;
   animation: turn 3s linear infinite;
 }
+
 .cradle {
   margin: 0 auto;
   width: 125px;
   height: 50px;
   position: relative;
 }
+
 .sphere {
   background: #266874;
   width: 10px;
@@ -223,6 +232,7 @@ export default {
     height: 40px;
     opacity: 1;
   }
+
   100% {
     left: 70px;
     top: 12px;
@@ -234,8 +244,9 @@ export default {
 
 @keyframes turn {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg)
   }
+
   100% {
     transform: rotate(360deg);
   }
