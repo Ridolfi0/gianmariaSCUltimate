@@ -1,3 +1,4 @@
+
 <script>
 export default {
   props: {
@@ -10,6 +11,7 @@ export default {
     return {
       tableData: [],
       isLoading: true,
+      selectedRows: []
     };
   },
   created() {
@@ -31,76 +33,94 @@ export default {
         this.isLoading = false;
       }
     },
+      toggleRowSelection(index) {
+      const pos = this.selectedRows.indexOf(index);
+      if (pos === -1) this.selectedRows.push(index);
+      else this.selectedRows.splice(pos, 1);
+    },
+    isRowSelected(index) {
+      return this.selectedRows.includes(index);
+    }, 
+    onSubmit() {
+      this.$emit('change-status', 'gestioneImpegni');
+    }
   }
 };
 </script>
-
 <template>
-  <!-- scritta home che si genera quando entri in una pagina (cronologia) delle pagine dove sei entrato -->
   <div class="fullscreen-wrapper">
+    <!-- Breadcrumb -->
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
       <ol class="breadcrumb">
-        <!-- cambia lo stato della pagina e lo mette ad home -->
-        <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
+        <li class="breadcrumb-item">
+          <a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Gestione impegni</li>
+        <li class="breadcrumb-item active" style="color: #fff">Gestione impegni</li>
       </ol>
     </nav>
 
-    <!-- freccia che torna indietro -->
+    <!-- Freccia indietro -->
     <div class="d-flex align-items-center back-title mb-4">
       <div class="circleArrow backArrow me-2">
-        <!-- cambia lo stato della pagina e lo mette ad home -->
         <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'home')"></i>
       </div>
-      <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Impegni</li>
-        </ol>
-      </nav>
+      <p class="fs-4 text-white mb-0 ms-3">Impegni</p>
     </div>
 
+    <!-- Loader -->
     <div v-if="isLoading" class="loader-fullscreen">
       <div class="cradle-wrap" v-for="n in 3" :key="n">
-        <div class="cradle">
-          <div class="sphere"></div>
-        </div>
+        <div class="cradle"><div class="sphere"></div></div>
       </div>
     </div>
 
-    <!-- bottone per aggiornare solo la tabella con le modifiche -->
-    <div v-else class="content-area">
-      <div class="table-section">
-        <div class="refresh-wrapper">
-          <div class="circle btnAddEvent mb-3" @click="fetchData">
-            <i class="bi bi-arrow-clockwise small-icon me-1"></i>
+    <!-- Contenuto con sfondo -->
+    <div v-else class="main-content-wrapper">
+      <div class="main-content-area">
+        <!-- Colonna sinistra: tabella -->
+        <div class="left-panel">
+          <div class="refresh-wrapper">
+            <div class="circle btnAddEvent" @click="fetchData">
+              <i class="bi bi-arrow-clockwise small-icon me-1"></i>
+            </div>
           </div>
+
+          <!-- Tabella -->
+          <form @submit.prevent="onSubmit">
+            <div class="table-container">
+              <table class="table table-striped table-bordered">
+                <thead v-if="tableData.length">
+                  <tr>
+                    <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
+                    <th>Seleziona</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, index) in tableData" :key="index">
+                    <td v-for="(value, key) in row" :key="key">{{ value }}</td>
+                    <td>
+                      <input 
+                        type="checkbox" 
+                        :checked="isRowSelected(index)" 
+                        @change="toggleRowSelection(index)" 
+                        style="width: 18px; height: 18px; cursor: pointer;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </form>
         </div>
 
-        <!-- tabella collegata al foglio google -->
-        <div class="table-container">
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, index) in tableData" :key="index">
-                <td v-for="(value, key) in row" :key="key">{{ value }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- bottoni per aggiungere e caricare impegni -->
-      <div class="button-panel" v-if="Ruolo !== 'viewer'">
-        <div class="circle btnAddEvent mb-3" @click="$emit('change-status', 'creaEvento')">
-          <i class="bi bi-plus small-icon"></i>
-        </div>
-        <div class="circle btnAddEvent" @click="$emit('change-status', 'importaEvento')">
-          <i class="bi bi-upload small-icon"></i>
+        <!-- Colonna destra: pulsanti -->
+        <div class="right-panel" v-if="Ruolo !== 'viewer'">
+          <div class="circle btnAddEvent mb-3" @click="$emit('change-status', 'creaEvento')">
+            <i class="bi bi-plus small-icon"></i>
+          </div>
+          <div class="circle btnAddEvent" @click="$emit('change-status', 'importaEvento')">
+            <i class="bi bi-upload small-icon"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -112,16 +132,8 @@ export default {
   padding: 2rem;
 }
 
-.breadcrumb-nav {
-  margin-bottom: 1rem;
-}
-
 .back-title {
   margin-bottom: 1rem;
-}
-
-.title {
-  color: #266874;
 }
 
 .loader-fullscreen {
@@ -131,40 +143,55 @@ export default {
   height: 300px;
 }
 
-.content-area {
+/* Tutta la sezione sotto ha sfondo azzurro */
+.main-content-wrapper {
+  background-color: #78c3ce;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+/* Layout a due colonne */
+.main-content-area {
   display: flex;
-  justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-.table-section {
-  flex: 2;
+/* Colonna sinistra */
+.left-panel {
+  flex: 1;
 }
 
+/* Colonna destra: bottoni verticali */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Bottone ricarica in alto a destra */
 .refresh-wrapper {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 0.5rem;
 }
 
+/* Contenitore tabella */
 .table-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
   overflow-x: auto;
 }
 
+/* Stile tabella */
 .table {
-  background-color: #fff;
+  background-color: white;
   width: 100%;
 }
 
-.button-panel {
-  flex: 0 0 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.circle {
+/* Bottoni circolari */
+.circle, .circleArrow {
   width: 60px;
   height: 60px;
   background-color: #266874;
@@ -177,32 +204,16 @@ export default {
   transition: all 0.2s ease;
 }
 
-.circle:hover {
+.circle:hover, .circleArrow:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.circleArrow {
-  width: 40px;
-  height: 40px;
-  background-color: #266874;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-}
-
-.backArrow:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .small-icon {
   font-size: 25px;
 }
 
+/* Loader sphere */
 .cradle-wrap {
   position: relative;
   animation: turn 3s linear infinite;

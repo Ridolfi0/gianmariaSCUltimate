@@ -1,56 +1,49 @@
 <script>
-
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-/* eslint-disable vue/require-v-for-key */
-/* eslint-disable no-prototype-builtins */
-
-//cork cork cork cork cork cork cork cork cork
-
 import { useLoginStore } from '../stores/login'
-import { ref } from 'vue'
-import { request } from '../utils'
-
 export default {
   props: {
     eventType: Object,
     Cartelle: Object
   },
   data() {
-  return {
-    isLoading: false,
-    folderData: this.Cartelle,
-    text: "",
-    nome: "",
-    descrizione: "",
-    dataInizio: "",
-    dataFine: "",
-  }
-},
-methods: {
-  async onSubmit() {
-    this.isLoading = true;
-    this.text = "Sto caricando le cartelle...";
-    await this.dataTrasmission();
-    this.isLoading = false;
-  },
-  async dataTrasmission() {
-    this.text = "Sto creando l'impegno...";
-    const loginStore = useLoginStore(); // se necessario per organizzazione (può essere omesso se `request` è accessibile direttamente)
-    try {
-      const res = await loginStore.datiNuovoImpegno(this.nome, this.descrizione, this.dataInizio, this.dataFine);
-      // Supponiamo che il server ritorni { status: "success" } in caso di successo
-      if (res.status === "success") {
-        this.$emit('change-status', 'gestioneImpegni');
-      } else {
-        alert("Errore nel salvataggio dell'impegno");
-      }
-    } catch (e) {
-      alert("Errore di connessione: " + e.message);
+    return {
+      isLoading: false,
+      folderData: this.Cartelle,
+      text: "",
+      nome: "",
+      descrizione: "",
+      dataInizio: "",
+      dataFine: "",
+      condividiConTutti: false
     }
-
-  }
-},
+  },
+  methods: {
+    async onSubmit() {
+      this.isLoading = true;
+      this.text = "Sto creando l'impegno...";
+      await this.dataTrasmission();
+      this.isLoading = false;
+    },
+    async dataTrasmission() {
+      const loginStore = useLoginStore();
+      try {
+        const res = await loginStore.datiNuovoImpegno(
+          this.nome,
+          this.descrizione,
+          this.dataInizio,
+          this.dataFine,
+          this.condividiConTutti
+        );
+        if (res.status === "success") {
+          this.$emit('change-status', 'gestioneImpegni');
+        } else {
+          alert("Errore nel salvataggio dell'impegno");
+        }
+      } catch (e) {
+        alert("Errore di connessione: " + e.message);
+      }
+    }
+  },
   emits: ['change-status']
 }
 </script>
@@ -76,6 +69,11 @@ methods: {
       <i class="bi bi-arrow-left fs-3" @click="$emit('change-status', 'gestioneImpegni')"></i>
     </div>
     <p class="fs-2 mx-2" style="color: white;">Crea {{ this.eventType }}</p>
+  </div>
+
+  <div class="checkbox-wrapper">
+    <input type="checkbox" id="condividi" v-model="condividiConTutti" class="buttonCondividi" />
+    <label for="condividi">Condividi con tutti</label>
   </div>
 
   <!-- tutto -->
@@ -339,5 +337,24 @@ p {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+}
+
+.buttonCondividi {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.checkbox-wrapper label {
+  color: white;
+  font-size: 16px;
+  line-height: 20px; 
 }
 </style>
