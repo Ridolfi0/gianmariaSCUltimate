@@ -65,9 +65,9 @@ export default {
   const loginStore = useLoginStore();
          
   try {
-    for( const imp in impegni) {
-      console.log(imp.Id);
-      const res = await loginStore.deleteImpegno(imp.Id); // Assumendo che la colonna ID si chiami così
+    for(let i = 0; i < impegni.length; i++) {
+      console.log(impegni[i].Id);
+      const res = await loginStore.deleteImpegno(impegni[i].Id); // Assumendo che la colonna ID si chiami così
       
       console.log(res.message || "Impegno eliminato");
     };
