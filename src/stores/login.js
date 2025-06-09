@@ -187,34 +187,63 @@ export const useLoginStore = defineStore('login', () => {
     return await request('getAllDates', payload);;
   }
 
-  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine)  
-  {
-    const payload = {
-      nome: nome,
-      descrizione: descrizione,
-      dataInizio: dataInizio,
-      dataFine: dataFine
-    }
-
-    return await request('creaImpegno', payload);
-  }
-
-  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex)  
+  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine, condividi)  
   {
     const payload = {
       nome: nome,
       descrizione: descrizione,
       dataInizio: dataInizio,
       dataFine: dataFine,
-      rowIndex: rowIndex
+      condividiConTutti: condividi
+    }
+
+    return await request('creaImpegno', payload);
+  }
+
+  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex, condividi)  
+  {
+    const payload = {
+      nome: nome,
+      descrizione: descrizione,
+      dataInizio: dataInizio,
+      dataFine: dataFine,
+      rowIndex: rowIndex, 
+      condividiConTutti: condividi
     }
 
     return await request('upLoadImpegni', payload);
   }
 
+  async function deleteImpegno(id) {
+    const payload = { id: id };
+    return await request('eliminaImpegno', payload);
+}
+
+
    async function creaCartelleInizioAnno() {
     return await request('createClassFolder')
   }
 
-  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno, upLoadImpegno, creaCartelleInizioAnno }
-}) 
+  async function CreaCloneVerAree(type, URL) {
+    
+    const payload = {
+      type: type,
+      url: URL
+    }
+
+    return await request('createDocumentCopy', payload)
+  }
+
+async function caricaDatiStudenti() {
+    return await request('caricaDatiStudenti')
+  }
+
+  async function caricaDatiDocenti() {
+    return await request('caricaDatiDocenti')
+  }
+
+  async function caricaDatiDocentiClassi() {
+    return await request('caricaDatiDocentiClassi')
+  }
+
+  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno, upLoadImpegno, creaCartelleInizioAnno, caricaDatiStudenti, caricaDatiDocenti, caricaDatiDocentiClassi, deleteImpegno, CreaCloneVerAree}})

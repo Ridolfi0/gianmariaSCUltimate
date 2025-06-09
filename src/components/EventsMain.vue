@@ -1,4 +1,5 @@
 <script>
+import { useLoginStore } from '../stores/login'
 export default {
   props: {
     Ruolo: String,
@@ -40,13 +41,18 @@ export default {
     async condividiConTutti() {
       if(this.selectedRows.length === 0) return;
       const impegni = this.selectedRows.map(i => this.tableData[i]);
+       const loginStore = useLoginStore();
       try {
-        const response = await fetch('/api', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ azione: 'condividi', impegni })
-        });
-        const result = await response.json();
+        // Controlliamo il valore di 'condividiConTutti' prima di inviarlo
+        console.log("Condividi con tutti:", this.condividiConTutti); // Debug
+
+        const res = await loginStore.datiNuovoImpegno(
+          this.nome,
+          this.descrizione,
+          this.dataInizio,
+          this.dataFine,
+          this.condividiConTutti // Passiamo direttamente il valore booleano
+        )
         alert(result.message || 'Condivisione completata');
       } catch (e) {
         alert('Errore nella condivisione');
@@ -54,23 +60,25 @@ export default {
       }
     },
     async eliminaImpegni() {
-      if(this.selectedRows.length === 0) return;
-      const impegni = this.selectedRows.map(i => this.tableData[i]);
-      try {
-        const response = await fetch('/api', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ azione: 'elimina', impegni })
-        });
-        const result = await response.json();
-        alert(result.message || 'Eliminazione completata');
-        this.fetchData();
-        this.selectedRows = [];
-      } catch (e) {
-        alert('Errore nell\'eliminazione');
-        console.error(e);
-      }
-    }
+  if(this.selectedRows.length === 0) return;
+  const impegni = this.selectedRows.map(i => this.tableData[i]);
+  const loginStore = useLoginStore();
+         
+  try {
+    for( const imp in impegni) {
+      console.log(imp.Id);
+      const res = await loginStore.deleteImpegno(imp.Id); // Assumendo che la colonna ID si chiami così
+      
+      console.log(res.message || "Impegno eliminato");
+    };
+
+    alert("Impegni eliminati correttamente");
+  } catch (e) {
+    alert("Errore nell'eliminazione");
+    console.error(e);
+  }
+}
+
   }
 };
 </script>

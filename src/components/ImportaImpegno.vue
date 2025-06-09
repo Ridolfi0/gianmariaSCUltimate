@@ -1,3 +1,77 @@
+<script>
+import { useLoginStore } from '../stores/login'
+
+export default {
+  props: {
+    eventType: Object,
+    Cartelle: Object
+  },
+  data() {
+    return {
+      isLoading: false,
+      folderData: this.Cartelle,
+      text: "",
+      tableData: [],
+      selectedRows: [],
+      condividiConTutti: false
+    }
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    async onSubmit() {
+      this.isLoading = true;
+      this.text = "Sto creando gli impegni selezionati...";
+      const loginStore = useLoginStore();
+      try {
+        for (let i = 0; i < this.selectedRows.length; i++) {
+          const index = this.selectedRows[i];
+          const row = this.tableData[index];
+
+          const res = await loginStore.upLoadImpegno(
+            row.Titolo,
+            row.Descrizione,
+            row.DataOraInizio,
+            row.DataOraFine,
+            index + 2,
+            this.condividiConTutti
+          );
+          if (res.status !== "success") {
+            console.warn("Errore su:", row.Titolo);
+          }
+        }
+        this.$emit('change-status', 'gestioneImpegni');
+      } catch (e) {
+        alert("Errore: " + e.message);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async fetchData() {
+      this.isLoading = true;
+      try {
+        const response = await fetch("https://opensheet.elk.sh/1FOIfb0XxLcvhPtgCHE04M0ny9HZeRuZrd7x9A2nhbJ4/Foglio1");
+        this.tableData = await response.json();
+      } catch (error) {
+        console.error("Errore nel caricamento:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    toggleRowSelection(index) {
+      const pos = this.selectedRows.indexOf(index);
+      if (pos === -1) this.selectedRows.push(index);
+      else this.selectedRows.splice(pos, 1);
+    },
+    isRowSelected(index) {
+      return this.selectedRows.includes(index);
+    }
+  },
+  emits: ['change-status']
+}
+</script>
+
 <template>
   <div class="fullscreen-wrapper">
     <!-- Breadcrumb -->
@@ -74,80 +148,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { useLoginStore } from '../stores/login'
-
-export default {
-  props: {
-    eventType: Object,
-    Cartelle: Object
-  },
-  data() {
-    return {
-      isLoading: false,
-      folderData: this.Cartelle,
-      text: "",
-      tableData: [],
-      selectedRows: [],
-      condividiConTutti: false
-    }
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async onSubmit() {
-      this.isLoading = true;
-      this.text = "Sto creando gli impegni selezionati...";
-      const loginStore = useLoginStore();
-      try {
-        for (let i = 0; i < this.selectedRows.length; i++) {
-          const index = this.selectedRows[i];
-          const row = this.tableData[index];
-
-          const res = await loginStore.upLoadImpegno(
-            row.Titolo,
-            row.Descrizione,
-            row.DataOraInizio,
-            row.DataOraFine,
-            index + 2,
-            this.condividiConTutti
-          );
-          if (res.status !== "success") {
-            console.warn("Errore su:", row.Titolo);
-          }
-        }
-        this.$emit('change-status', 'gestioneImpegni');
-      } catch (e) {
-        alert("Errore: " + e.message);
-      } finally {
-        this.isLoading = false;
-      }
-    },
-    async fetchData() {
-      this.isLoading = true;
-      try {
-        const response = await fetch("https://opensheet.elk.sh/1FOIfb0XxLcvhPtgCHE04M0ny9HZeRuZrd7x9A2nhbJ4/Foglio1");
-        this.tableData = await response.json();
-      } catch (error) {
-        console.error("Errore nel caricamento:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
-    toggleRowSelection(index) {
-      const pos = this.selectedRows.indexOf(index);
-      if (pos === -1) this.selectedRows.push(index);
-      else this.selectedRows.splice(pos, 1);
-    },
-    isRowSelected(index) {
-      return this.selectedRows.includes(index);
-    }
-  },
-  emits: ['change-status']
-}
-</script>
 
 <style scoped>
 .fullscreen-wrapper {

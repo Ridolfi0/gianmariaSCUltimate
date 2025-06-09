@@ -9,16 +9,25 @@ export default {
             LinkDBSacroCuore: this.Cartelle['LinkDBSacroCuore'],
             LinkStudentiDaCaricare: this.Cartelle['LinkStudentiDaCaricare'],
             LinkDocentiDaCaricare: this.Cartelle['LinkDocentiDaCaricare'],
-            LinkClassiDocentiDaCaricare: this.Cartelle['LinkClassiDocentiDaCaricare'],
-            caricaDatiStudenti: this.Cartelle['caricaDatiStudenti'],
-            caricaDatiDocenti: this.Cartelle['caricaDatiDocenti'],
-            caricaDatiDocentiClassi: this.Cartelle['caricaDatiDocentiClassi']
+            LinkClassiDocentiDaCaricare: this.Cartelle['LinkClassiDocentiDaCaricare']
         }
     },
     methods: {
         async creaCartelle() {
             const loginStore = useLoginStore();
             loginStore.creaCartelleInizioAnno();
+        },
+        async caricaDatiStudenti() {
+            const loginStore = useLoginStore();
+            loginStore.caricaDatiStudenti();
+        },
+        async caricaDatiDocenti() {
+            const loginStore = useLoginStore();
+            loginStore.caricaDatiDocenti();
+        },
+        async caricaDatiDocentiClassi() {
+            const loginStore = useLoginStore();
+            loginStore.caricaDatiDocentiClassi();
         }
     },
     emits: ["change-status"]   

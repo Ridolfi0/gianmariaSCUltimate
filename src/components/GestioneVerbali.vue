@@ -1,5 +1,6 @@
 <script>
 import { useLoginStore } from '../stores/login'
+import { ref } from 'vue'
 
 export default {
     props: { Cartelle:Object},
@@ -8,37 +9,27 @@ export default {
             //Risposte: this.Cartelle.file['GESTIONE_ORERISPOSTEURL'],
             //DbDocenti:  this.Cartelle.file['DB_DOCENTIURL'],
             //LinkForm : this.Cartelle.file['GESTIONE_OREURL']
-            // LinkCDC : this.Cartelle['LinkVerbaliCDC'],
-            // LinkAree : this.Cartelle['LinkVerbaliDipartimenti']
         }
     },
     methods: {
-        // async Clona(type, URL) {
-        //     this.text = "Sto creando la copia...";
-        //     try {
-        //         const res = await useLoginStore().CreaCloneVerAree(type, URL);
-        //         // Supponiamo che il server ritorni { status: "success" } in caso di successo
-        //         if (res.success === true) {
-        //             this.text = "Copia creata con successo";
-        //         } else {
-        //             alert("Errore nella creazione: " + res.message);
-        //         }
-        //     } catch (e) {
-        //         alert("Errore di connessione: " + e.message);
-        //     }
-        // }
+        async Clona(type, URL) {
+            try {
+                const loginStore = useLoginStore(); // Prima ottieni lo store
+                const res = await loginStore.CreaCloneVerAree(type, URL); // Poi usa il suo metodo
+            
+                if (res.success === true) {
+                    
+                } else {
+                    alert("Errore nella creazione: " + (res.message || "Errore sconosciuto"));
+                }
+            } catch (e) {
+                alert("Errore di connessione: " + e.message);
+            }
+        },
     },
     emits: ["change-status"]    
 }
 </script>
-
-<style>
-iframe {
-    width: 90%;
-    height: 200%;
-    border-radius: 25px;
-}
-</style>
 
 <template>
     <div class="container-fluid my-3">
@@ -59,7 +50,7 @@ iframe {
         <h3 style="margin: 0;">Modello verbale cdc:</h3>
         <a class="linkModelli" :href="Cartelle['LinkVerbaliCDC']">clicca qui</a>
     </div>
-    <button class="azzurro-button" @click="Clona('cdc', Cartelle['LinkVerbaliCDC'])">Crea verbale per ogni classe</button>
+    <button class="azzurro-button" @click="Clona('cdc', Cartelle['LinkVerbaliCDC'])">Crea verbale per ogni classe</button>  
     <br>
     <br>
     <div style="display: flex; align-items: center; gap: 8px;">
@@ -68,7 +59,6 @@ iframe {
     </div>
     <button class="azzurro-button" @click="Clona('dipartimenti', Cartelle['LinkVerbaliDipartimenti'])">Crea verbale per ogni dipartimento</button>
 </template>
-
 <style scoped>
 .circle {
     width: 40px;
@@ -88,8 +78,9 @@ iframe {
 }
 
 iframe {
-    width: 85%;
-    height: 900px;
+    width: 90%;
+    height: 200%;
+    border-radius: 25px;
 }
 
 .backArrow:hover{
