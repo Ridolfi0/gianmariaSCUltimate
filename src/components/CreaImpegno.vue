@@ -14,7 +14,7 @@ export default {
       descrizione: "",
       dataInizio: "",
       dataFine: "",
-      condividiConTutti: false
+      condividiConTutti: false // Checkbox per condividere con tutti
     }
   },
   methods: {
@@ -27,13 +27,17 @@ export default {
     async dataTrasmission() {
       const loginStore = useLoginStore();
       try {
+        // Controlliamo il valore di 'condividiConTutti' prima di inviarlo
+        console.log("Condividi con tutti:", this.condividiConTutti); // Debug
+
         const res = await loginStore.datiNuovoImpegno(
           this.nome,
           this.descrizione,
           this.dataInizio,
           this.dataFine,
-          this.condividiConTutti
+          this.condividiConTutti // Passiamo direttamente il valore booleano
         );
+        
         if (res.status === "success") {
           this.$emit('change-status', 'gestioneImpegni');
         } else {
@@ -49,7 +53,6 @@ export default {
 </script>
 
 <template>
-
   <!-- breadcrumb -->
 
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5">
@@ -90,8 +93,7 @@ export default {
         <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
         <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
         <button type="submit" class="azzurro-button" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
-</form>
-
+        </form>
       </div>
       <div class="containerC" v-else>
         <div class="cradle-wrap">

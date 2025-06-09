@@ -109,8 +109,8 @@ export default {
           const res = await loginStore.upLoadImpegno(
             row.Titolo,
             row.Descrizione,
-            row.dataOraInizio,
-            row.dataOraFine,
+            row.DataOraInizio,
+            row.DataOraFine,
             index + 2,
             this.condividiConTutti
           );

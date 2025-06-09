@@ -1,4 +1,6 @@
 <script>
+import { useLoginStore } from '../stores/login'
+
 export default {
     props: { Cartelle:Object},
     data() {
@@ -6,7 +8,25 @@ export default {
             //Risposte: this.Cartelle.file['GESTIONE_ORERISPOSTEURL'],
             //DbDocenti:  this.Cartelle.file['DB_DOCENTIURL'],
             //LinkForm : this.Cartelle.file['GESTIONE_OREURL']
+            // LinkCDC : this.Cartelle['LinkVerbaliCDC'],
+            // LinkAree : this.Cartelle['LinkVerbaliDipartimenti']
         }
+    },
+    methods: {
+        // async Clona(type, URL) {
+        //     this.text = "Sto creando la copia...";
+        //     try {
+        //         const res = await useLoginStore().CreaCloneVerAree(type, URL);
+        //         // Supponiamo che il server ritorni { status: "success" } in caso di successo
+        //         if (res.success === true) {
+        //             this.text = "Copia creata con successo";
+        //         } else {
+        //             alert("Errore nella creazione: " + res.message);
+        //         }
+        //     } catch (e) {
+        //         alert("Errore di connessione: " + e.message);
+        //     }
+        // }
     },
     emits: ["change-status"]    
 }
@@ -37,16 +57,16 @@ iframe {
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
         <h3 style="margin: 0;">Modello verbale cdc:</h3>
-        <a class="linkModelli" href="https://docs.google.com/document/d/13mvA9r6CC8Le_NNC2bolRAh5effPdWVFGHmhJ9TKufg/edit?tab=t.0"  target="_blank" rel="noopener noreferrer">clicca qui</a>
+        <a class="linkModelli" :href="Cartelle['LinkVerbaliCDC']">clicca qui</a>
     </div>
-    <button class="azzurro-button">Crea verbale per ogni classe</button>  
+    <button class="azzurro-button" @click="Clona('cdc', Cartelle['LinkVerbaliCDC'])">Crea verbale per ogni classe</button>
     <br>
     <br>
     <div style="display: flex; align-items: center; gap: 8px;">
         <h3 style="margin: 0;">Modello verbale dipartimenti:</h3>
-        <a class="linkModelli" href="https://docs.google.com/document/d/1RPD0dsqFd62dio82PBMrDqozOkYK57px-QYI0B6Xq_s/edit?tab=t.0" target="_blank" rel="noopener noreferrer">clicca qui</a>
+        <a class="linkModelli" :href="Cartelle['LinkVerbaliDipartimenti']">clicca qui</a>
     </div>
-    <button class="azzurro-button">Crea verbale per ogni dipartimento</button>
+    <button class="azzurro-button" @click="Clona('dipartimenti', Cartelle['LinkVerbaliDipartimenti'])">Crea verbale per ogni dipartimento</button>
 </template>
 
 <style scoped>
