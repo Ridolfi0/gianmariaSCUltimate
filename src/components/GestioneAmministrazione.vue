@@ -15,7 +15,8 @@ export default {
     methods: {
         async creaCartelle() {
             const loginStore = useLoginStore();
-            loginStore.creaCartelleInizioAnno();
+            loginStore.creaCartelleClassi();
+            loginStore.creaCartelleDipartimenti();
         },
         async caricaDatiStudenti() {
             const loginStore = useLoginStore();
