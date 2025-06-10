@@ -235,8 +235,17 @@ export const useLoginStore = defineStore('login', () => {
 
   //jessica: fino a qui
 
-  async function creaCartelleInizioAnno() {
-    return await request('createClassFolder')
+  
+async function creaCartelleClassi() {
+    const res = await request('createClassFolders');
+    console.log('Class Folder Creation Results:', res); 
+    return res;
+  }
+
+  async function creaCartelleDipartimenti() {
+    const res = await request('createDepartmentFolders');
+    console.log('Department Folder Creation Results:', res); 
+    return res;
   }
 
   async function CreaCloneVerAree(type, URL) {
@@ -279,7 +288,8 @@ export const useLoginStore = defineStore('login', () => {
     recuperaDate,
     datiNuovoImpegno,
     upLoadImpegno,
-    creaCartelleInizioAnno,
+    creaCartelleClassi,
+    creaCartelleDipartimenti,
     caricaDatiStudenti,
     caricaDatiDocenti,
     caricaDatiDocentiClassi,
