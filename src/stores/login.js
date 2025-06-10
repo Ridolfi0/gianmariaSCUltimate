@@ -5,9 +5,7 @@ import { request } from '../utils'
 /* eslint-disable no-unused-vars */
 
 export const useLoginStore = defineStore('login', () => {
-
   async function log(mail, password) {
-
     const payload = {
       mail: mail.value,
       userpwd: password.value
@@ -19,7 +17,6 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function editPermissions(mail, role) {
-
     const payload = {
       mail: mail.value,
       role: role.value
@@ -31,7 +28,6 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function addNewUser(mail, name, surname, role, psw) {
-    
     const payload = {
       mail: mail.value,
       name: name.value,
@@ -46,14 +42,12 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function fetchAllUsers() {
-
-    const res = await request('returnAllUsers', {}) //payload è oggetto json 
+    const res = await request('returnAllUsers', {}) //payload è oggetto json
 
     return res
   }
 
   async function updatePassword(mail, psw) {
-
     const payload = {
       mail: mail.value,
       password: psw.value
@@ -61,7 +55,7 @@ export const useLoginStore = defineStore('login', () => {
 
     const res = await request('ChangePassword', payload)
 
-    return res;
+    return res
   }
 
   async function fetchEvents(eDBId) {
@@ -74,23 +68,30 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function deleteUser(mailToDelete) {
+    const res = await request('DeleteUser', { mail: mailToDelete.value })
 
-    const res = await request('DeleteUser', { "mail" : mailToDelete.value})
-    
-    return res;
+    return res
   }
 
-  //metodo per la clonazione dell'openDay 
-  async function transmitOpendayData(idTemplate, idFolderOpenday, date, currentTurn, startTime, prenotazioni, db, pres) {
-
+  //metodo per la clonazione dell'openDay
+  async function transmitOpendayData(
+    idTemplate,
+    idFolderOpenday,
+    date,
+    currentTurn,
+    startTime,
+    prenotazioni,
+    db,
+    pres
+  ) {
     const payload = {
-      idTemplatePrenotazioni : idTemplate.value,
-      idFolderOpenDay : idFolderOpenday.value,
+      idTemplatePrenotazioni: idTemplate.value,
+      idFolderOpenDay: idFolderOpenday.value,
       data: date.value,
       turno: currentTurn.value,
       oraInizio: startTime.value,
       nrPren: prenotazioni.value,
-      db : db.value,
+      db: db.value,
       isPresente: pres.value
     }
 
@@ -101,31 +102,36 @@ export const useLoginStore = defineStore('login', () => {
 
   //metodo per la clonazione del ministage
   async function transmitMinistageData(idTemplate, idFolder, date, nrProg, maxPren, db) {
-
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
       idFolderMini: idFolder.value,
       data: date.value,
       prog: nrProg.value, //numero progressivo minstage
-      nrMaxPren: maxPren.value,  //array [nrIA, nrBI, nrAB]
-      db : db.value
+      nrMaxPren: maxPren.value, //array [nrIA, nrBI, nrAB]
+      db: db.value
     }
 
     const res = await request('cloneMini', payload)
 
     return res
   }
-  
-  //metodo per la clonazione del summerStage
-  async function transmitSummerStageData(idTemplate, idFolderSummerStage, maxPren, date, progressive, db) {
 
+  //metodo per la clonazione del summerStage
+  async function transmitSummerStageData(
+    idTemplate,
+    idFolderSummerStage,
+    maxPren,
+    date,
+    progressive,
+    db
+  ) {
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
       idFolderSummer: idFolderSummerStage.value,
-      nrMaxPren:maxPren.value,  //array [nrMaxLabInfo, nrMaxLabAuto, nrMaxLabBio]
-      date: date.value,  //array ['giovedì 13 giugno', ...]
-      prog: progressive.value, 
-      db : db.value
+      nrMaxPren: maxPren.value, //array [nrMaxLabInfo, nrMaxLabAuto, nrMaxLabBio]
+      date: date.value, //array ['giovedì 13 giugno', ...]
+      prog: progressive.value,
+      db: db.value
     }
 
     const res = await request('cloneSummer', payload)
@@ -133,34 +139,39 @@ export const useLoginStore = defineStore('login', () => {
     return res
   }
 
-  async function cloneTemplateAiutanti(idTemplatePrenotazioni, idFolderOpenday, data, nrMaxPartecipanti, roles, db) {
-
+  async function cloneTemplateAiutanti(
+    idTemplatePrenotazioni,
+    idFolderOpenday,
+    data,
+    nrMaxPartecipanti,
+    roles,
+    db
+  ) {
     const payload = {
       idTemplatePrenotazioni: idTemplatePrenotazioni.value,
       idFolderOpenDay: idFolderOpenday.value,
       data: data.value,
       nrMaxPartecipanti: nrMaxPartecipanti.value,
-      ruoli : roles.value,
-      db : db.value
+      ruoli: roles.value,
+      db: db.value
     }
 
     const res = await request('cloneTemplateHelpersOpen', payload)
 
-    return res;
+    return res
   }
 
   async function cloneTemplateAiutantiMiniStage(idTemplate, idFolder, date, db) {
-    
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
       idFolderMini: idFolder.value,
       data: date.value,
-      db : db.value
+      db: db.value
     }
 
     const res = await request('cloneTemplateHelpersMini', payload)
 
-    return res;
+    return res
   }
 
   async function recuperoDatiCartelle() {
@@ -168,7 +179,6 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function recuperoProgFromID(id) {
-
     const payload = {
       selectedID: id.value
     }
@@ -180,15 +190,15 @@ export const useLoginStore = defineStore('login', () => {
     return await request('onCreation', {})
   }
 
-  async function recuperaDate(id) {  
+  async function recuperaDate(id) {
     const payload = {
       dbOpenDayId: id
-    }  
-    return await request('getAllDates', payload);;
+    }
+    return await request('getAllDates', payload)
   }
 
-  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine, condividi)  
-  {
+  //jessica   
+  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine, condividi) {
     const payload = {
       nome: nome,
       descrizione: descrizione,
@@ -197,35 +207,39 @@ export const useLoginStore = defineStore('login', () => {
       condividiConTutti: condividi
     }
 
-    return await request('creaImpegno', payload);
+    return await request('creaImpegno', payload)
   }
 
-  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex, condividi)  
-  {
+  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex, condividi) {
     const payload = {
       nome: nome,
       descrizione: descrizione,
       dataInizio: dataInizio,
       dataFine: dataFine,
-      rowIndex: rowIndex, 
+      rowIndex: rowIndex,
       condividiConTutti: condividi
     }
 
-    return await request('upLoadImpegni', payload);
+    return await request('upLoadImpegni', payload)
   }
 
-  async function deleteImpegno(id) {
-    const payload = { id: id };
-    return await request('eliminaImpegno', payload);
-}
+  async function deleteImpegno(miPiaccionoTantoIGatti) {
+    const payload = { id: miPiaccionoTantoIGatti }
+    return await request('eliminaImpegno', payload)
+  }
 
+  async function condividiImpegno(idImpegno) {
+    const payload = { id: idImpegno }
+    return await request('condividiImpegno', payload)
+  }
 
-   async function creaCartelleInizioAnno() {
+  //jessica: fino a qui
+
+  async function creaCartelleInizioAnno() {
     return await request('createClassFolder')
   }
 
   async function CreaCloneVerAree(type, URL) {
-    
     const payload = {
       type: type,
       url: URL
@@ -234,7 +248,7 @@ export const useLoginStore = defineStore('login', () => {
     return await request('createDocumentCopy', payload)
   }
 
-async function caricaDatiStudenti() {
+  async function caricaDatiStudenti() {
     return await request('caricaDatiStudenti')
   }
 
@@ -246,4 +260,31 @@ async function caricaDatiStudenti() {
     return await request('caricaDatiDocentiClassi')
   }
 
-  return { log, deleteUser, fetchAllUsers, editPermissions, fetchEvents, transmitOpendayData, transmitMinistageData, transmitSummerStageData, recuperoDatiCartelle, addNewUser, updatePassword, inizializzazioneCartelle, cloneTemplateAiutanti, recuperoProgFromID, cloneTemplateAiutantiMiniStage, recuperaDate, datiNuovoImpegno, upLoadImpegno, creaCartelleInizioAnno, caricaDatiStudenti, caricaDatiDocenti, caricaDatiDocentiClassi, deleteImpegno, CreaCloneVerAree}})
+  return {
+    log,
+    deleteUser,
+    fetchAllUsers,
+    editPermissions,
+    fetchEvents,
+    transmitOpendayData,
+    transmitMinistageData,
+    transmitSummerStageData,
+    recuperoDatiCartelle,
+    addNewUser,
+    updatePassword,
+    inizializzazioneCartelle,
+    cloneTemplateAiutanti,
+    recuperoProgFromID,
+    cloneTemplateAiutantiMiniStage,
+    recuperaDate,
+    datiNuovoImpegno,
+    upLoadImpegno,
+    creaCartelleInizioAnno,
+    caricaDatiStudenti,
+    caricaDatiDocenti,
+    caricaDatiDocentiClassi,
+    deleteImpegno,
+    condividiImpegno,
+    CreaCloneVerAree
+  }
+})

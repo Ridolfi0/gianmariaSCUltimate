@@ -1,3 +1,4 @@
+Impegno non trovato nel foglio
 <script>
 import { useLoginStore } from '../stores/login'
 export default {
@@ -40,19 +41,16 @@ export default {
     },
     async condividiConTutti() {
       if(this.selectedRows.length === 0) return;
-      const impegni = this.selectedRows.map(i => this.tableData[i]);
-       const loginStore = useLoginStore();
-      try {
-        // Controlliamo il valore di 'condividiConTutti' prima di inviarlo
-        console.log("Condividi con tutti:", this.condividiConTutti); // Debug
-
-        const res = await loginStore.datiNuovoImpegno(
-          this.nome,
-          this.descrizione,
-          this.dataInizio,
-          this.dataFine,
-          this.condividiConTutti // Passiamo direttamente il valore booleano
-        )
+  const impegni = this.selectedRows.map(i => this.tableData[i]);
+  const loginStore = useLoginStore();
+         
+  try {
+    for(let i = 0; i < impegni.length; i++) {
+      console.log(impegni[i].Id);
+      const res = await loginStore.condividiImpegno(impegni[i].Id); // Assumendo che la colonna ID si chiami così
+      
+      console.log(res.message || "Impegno condiviso con");
+    };
         alert(result.message || 'Condivisione completata');
       } catch (e) {
         alert('Errore nella condivisione');
