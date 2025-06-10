@@ -5,153 +5,299 @@ export default {
     props: { Cartelle:Object},
     data() {
         return {
-            //DbStudenti: this.Cartelle.file['DB_STUDENTIURL'],
             LinkDBSacroCuore: this.Cartelle['LinkDBSacroCuore'],
             LinkStudentiDaCaricare: this.Cartelle['LinkStudentiDaCaricare'],
             LinkDocentiDaCaricare: this.Cartelle['LinkDocentiDaCaricare'],
-            LinkClassiDocentiDaCaricare: this.Cartelle['LinkClassiDocentiDaCaricare']
-        }
+            LinkClassiDocentiDaCaricare: this.Cartelle['LinkClassiDocentiDaCaricare'],
+            
+            statusStudenti: null, 
+            statusDocenti: null,
+            statusDocentiClassi: null,
+            
+            loadingStudenti: false,
+            loadingDocenti: false,
+            loadingDocentiClassi: false
+        }  
     },
-    methods: {
+    methods: {  
         async creaCartelle() {
             const loginStore = useLoginStore();
             loginStore.creaCartelleClassi();
             loginStore.creaCartelleDipartimenti();
         },
         async caricaDatiStudenti() {
+            this.loadingStudenti = true;
+            this.statusStudenti = null;
             const loginStore = useLoginStore();
-            loginStore.caricaDatiStudenti();
+            try {
+                await loginStore.caricaDatiStudenti();
+                const verifica = await loginStore.verificaDatiStudenti();
+                if (verifica) {
+                    this.statusStudenti = 'success';
+                } else {
+                    this.statusStudenti = 'error';
+                }
+            } catch (error) {
+                console.error("Errore durante il caricamento/verifica dati degli studenti:", error);
+                this.statusStudenti = 'error';
+            } finally {
+                this.loadingStudenti = false;
+            }
         },
         async caricaDatiDocenti() {
+            this.loadingDocenti = true;
+            this.statusDocenti = null;
             const loginStore = useLoginStore();
-            loginStore.caricaDatiDocenti();
+            try {
+                await loginStore.caricaDatiDocenti();
+                const verifica = await loginStore.verificaDatiDocenti();
+                if (verifica) {
+                    this.statusDocenti = 'success';
+                } else {
+                    this.statusDocenti = 'error';
+                }
+            } catch (error) {
+                console.error("Errore durante il caricamento/verifica dati dei docenti:", error);
+                this.statusDocenti = 'error';
+            } finally {
+                this.loadingDocenti = false;
+            }
         },
         async caricaDatiDocentiClassi() {
+            this.loadingDocentiClassi = true;
+            this.statusDocentiClassi = null;
             const loginStore = useLoginStore();
-            loginStore.caricaDatiDocentiClassi();
+            try {
+                await loginStore.caricaDatiDocentiClassi();
+                const verifica = await loginStore.verificaDatiDocentiClassi();
+                if (verifica) {
+                    this.statusDocentiClassi = 'success';
+                } else {
+                    this.statusDocentiClassi = 'error';
+                }
+            } catch (error) {
+                console.error("Errore durante il caricamento/verifica dei dati delle classi dei docenti:", error);
+                this.statusDocentiClassi = 'error';
+            } finally {
+                this.loadingDocentiClassi = false;
+            }
         }
     },
     emits: ["change-status"]   
 }
 </script>
 
-//jessica   
 <template>
     <div class="container-fluid my-3">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5 unselectable">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Amministratore</li>
-        </ol>
-    </nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Amministrazione</li>
+            </ol>
+        </nav>
     </div>
-    <div class="sameLine">
-        <div class="circle backArrow margin ms-3">
-            <i class="bi bi-arrow-left fs-3" @click="$emit('change-status', 'home')"></i>
-        </div>
-    </div>
-    <div class="container-fluid my-3">
-           <!-- <iframe :src="this.DbStudenti" style="height: 1000px;"></iframe> -->
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 style="margin: 0;">Gestione generale (link al database):</h3>
-            <a class="linkModelli" :href="LinkDBSacroCuore" target="_blank" rel="noopener noreferrer">clicca qui</a>
+
+    <div class="container-fluid py-4">
+        <h2 class="section-title mb-4 text-white">Pannello di Amministrazione</h2>
+
+        <div class="card mb-4 panel-card">
+            <div class="card-body">
+                <h3 class="card-title text-primary">Gestione Generale</h3>
+                <div class="d-flex align-items-center mt-3">
+                    <p class="mb-0 me-2 text-dark">Link al database principale:</p>
+                    <a class="linkModelli" :href="LinkDBSacroCuore" target="_blank" rel="noopener noreferrer">clicca qui</a>
+                </div>
+            </div>
         </div>
 
-        <h4>Operazioni di inzio anno:</h4>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h4>Crea cartelle per verbali (cdc e dipartimenti)</h4> 
-            <button @click="creaCartelle" class="azzurro-button">Crea</button>
+        <div class="card mb-4 panel-card">
+            <div class="card-body">
+                <h3 class="card-title text-primary">Operazioni di Inizio Anno</h3>
+                
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <h5 class="mb-0 text-dark">Crea cartelle classi e dipartimenti</h5> 
+                    <button @click="creaCartelle" class="azzurro-button">Crea</button>
+                </div>
+                
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <h5 class="mb-0 text-dark">Archivia i dati degli STUDENTI dell'anno precedente</h5> 
+                    <button class="azzurro-button">Archivia</button>
+                </div>
+                
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <h5 class="mb-0 text-dark">Archivia i dati degli DOCENTI dell'anno precedente</h5> 
+                    <button class="azzurro-button">Archivia</button>
+                </div>
+            </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h4>Archivia i dati degli STUDENTI dell'anno precedente</h4> 
-            <button class="azzurro-button">Archivia</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h4>Archivia i dati degli DOCENTI dell'anno precedente</h4> 
-            <button class="azzurro-button">Archivia</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 style="margin: 0;">Documento per l'inserimento dati degli studenti: </h3>
-            <a class="linkModelli" :href="LinkStudentiDaCaricare" target="_blank" rel="noopener noreferrer">clicca qui</a>
-            <button class="azzurro-button" @click="caricaDatiStudenti">Carica</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 style="margin: 0;">Documento per l'inserimento dati dei docenti: </h3>
-            <a class="linkModelli" :href="LinkDocentiDaCaricare" target="_blank" rel="noopener noreferrer">clicca qui</a>
-            <button class="azzurro-button" @click="caricaDatiDocenti">Carica</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 style="margin: 0;">Documento per l'inserimento dati delle classi dei docenti: </h3>
-            <a class="linkModelli" :href="LinkClassiDocentiDaCaricare" target="_blank" rel="noopener noreferrer">clicca qui</a>
-            <button class="azzurro-button" @click="caricaDatiDocentiClassi">Carica</button>
+
+        <div class="card mb-4 panel-card">
+            <div class="card-body">
+                <h3 class="card-title text-primary">Importazione Dati</h3>
+
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <a class="linkModelli" :href="LinkStudentiDaCaricare" target="_blank" rel="noopener noreferrer">Documento per l'inserimento dati degli STUDENTI:</a>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="azzurro-button" @click="caricaDatiStudenti" :disabled="loadingStudenti">
+                            {{ loadingStudenti ? 'Caricamento...' : 'Carica' }}
+                        </button>
+                        <span v-if="statusStudenti === 'success'" class="text-success fs-4 status-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                        <span v-else-if="statusStudenti === 'error'" class="text-danger fs-4 status-icon">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </span>
+                    </div>
+                </div>
+                <p v-if="statusStudenti" :class="{'text-success': statusStudenti === 'success', 'text-danger': statusStudenti === 'error'}" class="status-message ms-auto mt-1">
+                    {{ statusStudenti === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                </p>
+
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <a class="linkModelli" :href="LinkDocentiDaCaricare" target="_blank" rel="noopener noreferrer">Documento per l'inserimento dati dei DOCENTI:</a>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="azzurro-button" @click="caricaDatiDocenti" :disabled="loadingDocenti">
+                            {{ loadingDocenti ? 'Caricamento...' : 'Carica' }}
+                        </button>
+                        <span v-if="statusDocenti === 'success'" class="text-success fs-4 status-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                        <span v-else-if="statusDocenti === 'error'" class="text-danger fs-4 status-icon">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </span>
+                    </div>
+                </div>
+                <p v-if="statusDocenti" :class="{'text-success': statusDocenti === 'success', 'text-danger': statusDocenti === 'error'}" class="status-message ms-auto mt-1">
+                    {{ statusDocenti === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                </p>
+
+                <div class="operation-item d-flex align-items-center justify-content-between my-3">
+                    <a class="linkModelli" :href="LinkClassiDocentiDaCaricare" target="_blank" rel="noopener noreferrer">Documento per l'inserimento dati delle CLASSI DEI DOCENTI:</a>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="azzurro-button" @click="caricaDatiDocentiClassi" :disabled="loadingDocentiClassi">
+                            {{ loadingDocentiClassi ? 'Caricamento...' : 'Carica' }}
+                        </button>
+                        <span v-if="statusDocentiClassi === 'success'" class="text-success fs-4 status-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </span>
+                        <span v-else-if="statusDocentiClassi === 'error'" class="text-danger fs-4 status-icon">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </span>
+                    </div>
+                </div>
+                <p v-if="statusDocentiClassi" :class="{'text-success': statusDocentiClassi === 'success', 'text-danger': statusDocentiClassi === 'error'}" class="status-message ms-auto mt-1">
+                    {{ statusDocentiClassi === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                </p>
+            </div>
         </div>
     </div>
 </template>
 
+---
+
 <style scoped>
-iframe {
-    width: 90%;
-    height: 200%;
-    border-radius: 25px;
+/* Stili di base */
+body {
+    background-color: #2b2e4a;
+    color: #f8f9fa; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.circle {
-    width: 40px;
-    height: 40px;
-    background-color: #266874;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 150px;
+.container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.backArrow{
-    border-width: 40px;
-    border-radius: 50px;
+/* Top Bar: Back button e Breadcrumb */
+/* Rimuovi completamente .top-bar e .circle se non utilizzati in questo componente */
+/* Se .top-bar e .circle sono usati altrove, lasciali. Il tuo template non li usa per la breadcrumb. */
+
+/* Classi cronologia percorso */
+.breadcrumb-item a {
+    color: #fff !important;
+    text-decoration: underline !important;
+    transition: color 0.2s ease;
 }
 
-iframe {
-    width: 85%;
-    height: 900px;
+.breadcrumb-item.active {
+    color: #fff !important;
 }
 
-.backArrow:hover{
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: white;
-    transition: transform 0.2s, box-shadow 0.2s;
+/* Titolo della Sezione Principale */
+.section-title {
+    color: #e0f7fa; /* Un colore chiaro per il titolo principale */
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+/* Stile delle Card del Pannello */
+.panel-card {
+    background-color: #f8f9fa; /* Sfondo chiaro per le card */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.panel-card .card-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #2b2e4a; /* Colore scuro per i titoli delle card */
+    border-bottom: 2px solid #e9ecef; /* Linea di separazione sottile */
+    padding-bottom: 0.75rem;
+}
+
+.operation-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #dee2e6; /* Linea divisoria tra le operazioni */
+}
+
+.operation-item:last-child {
+    border-bottom: none; /* Rimuovi la linea dall'ultimo elemento */
+}
+
+.operation-item h5, .operation-item p {
+    color: #343a40; /* Colore scuro per il testo delle operazioni */
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+/* Link ai documenti */
 .linkModelli {
-    color: #000000;
+    color: #343a40; 
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
 }
 
-input {
-  background-color: #266874;
-  color: #78c3ce;
+.linkModelli:hover {
+    color: #0056b3;
+    text-decoration: underline;
 }
 
-input:focus {
-  background-color: #21575f;
-}
-
-/* jessica    */
+/* Pulsanti Azzurri  */
 .azzurro-button {
   background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
   border: none;
   border-radius: 8px;
-  padding: 6px 16px;
+  padding: 8px 20px; /* Padding leggermente aumentato */
   color: white;
-  font-size: 0.9rem;
+  font-size: 1rem; /* Dimensione del font leggermente aumentata */
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 159, 255, 0.25);
   transition: all 0.25s ease;
   letter-spacing: 0.04em;
   user-select: none;
+  min-width: 120px; /* Larghezza minima per i pulsanti */
+  text-align: center;
 }
 
 .azzurro-button:hover {
@@ -165,4 +311,43 @@ input:focus {
   box-shadow: 0 3px 6px rgba(0, 159, 255, 0.3);
 }
 
+.azzurro-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(135deg,rgb(79, 107, 200) 0%,rgb(27, 52, 95) 100%); /* Colore invertito per disabilitato */
+    box-shadow: none;
+    transform: none;
+}
+
+/* Icone di stato */
+.status-icon {
+    margin-left: 0.5rem;
+    font-size: 1.8rem !important; /* Rendi le icone più grandi e visibili */
+}
+
+/* Messaggi di stato sotto i bottoni */
+.status-message {
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    margin-left: auto; /* Allinea a destra il messaggio */
+    padding-left: 1rem; /* Spazio dal bordo */
+}
+
+.text-success {
+    color: #28a745 !important; /* Verde Bootstrap */
+}
+
+.text-danger {
+    color: #dc3545 !important; /* Rosso Bootstrap */
+}
+
+/* Altri stili */
+.unselectable {
+    user-select: none; /* Rende il testo non selezionabile */
+}
+
+/* Rimuovi gli stili iframe non più usati */
+iframe {
+    display: none; /* Se non usato, nascondilo completamente */
+}
 </style>
