@@ -100,7 +100,6 @@ export const useLoginStore = defineStore('login', () => {
     return res
   }
 
-  //metodo per la clonazione del ministage
   async function transmitMinistageData(idTemplate, idFolder, date, nrProg, maxPren, db) {
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
