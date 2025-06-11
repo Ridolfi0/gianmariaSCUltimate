@@ -76,19 +76,18 @@ export default {
 <template>
   <div class="fullscreen-wrapper">
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mt-3 ms-5 unselectable breadcrumb-nav">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="#" @click="$emit('change-status', 'home')">Home</a>
+          <a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
         </li>
-        <li class="breadcrumb-item">
-          <a href="#" @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a>
+        <li class="breadcrumb-item active" aria-current="page" style="color: #fff">
+          <a href="#" style="color: #fff" @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a>
         </li>
-        <li class="breadcrumb-item active">Importa impegno</li>
+        <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Importa impegno</li>
       </ol>
     </nav>
 
-    <!-- Titolo -->
     <div class="d-flex align-items-center back-title mb-4">
       <div class="circleArrow backArrow me-2">
         <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'gestioneImpegni')"></i>
@@ -96,15 +95,12 @@ export default {
       <h2 class="ms-3 text-white">Importa Impegno</h2>
     </div>
 
-    <!-- Contenuto -->
     <div class="main-content-wrapper">
-      <!-- Checkbox -->
       <div class="checkbox-wrapper mb-3">
         <input type="checkbox" id="condividi" v-model="condividiConTutti" class="buttonCondividi" />
         <label for="condividi">Condividi con tutti</label>
       </div>
 
-      <!-- Tabella e pulsante -->
       <div v-if="!isLoading">
         <form @submit.prevent="onSubmit">
           <div class="table-container">
@@ -131,7 +127,6 @@ export default {
             </table>
           </div>
 
-          <!-- Bottone in basso a destra -->
           <div class="upload-button-wrapper">
             <div class="circle btnUpLoadEvent" @click="onSubmit">
               <i class="bi bi-upload small-icon"></i>
@@ -140,7 +135,6 @@ export default {
         </form>
       </div>
 
-      <!-- Loader -->
       <div v-else class="loader-fullscreen">
         <div class="cradle-wrap" v-for="n in 3" :key="n">
           <div class="cradle"><div class="sphere"></div></div>
@@ -199,7 +193,6 @@ export default {
   border-radius: 10px;
 }
 
-/* Bordo coerente con colore secondario */
 .table-container {
   background-color: white;
   padding: 1rem;
@@ -207,20 +200,17 @@ export default {
   overflow-x: auto;
 }
 
-/* Upload button wrapper allineato a destra */
 .upload-button-wrapper {
   display: flex;
   justify-content: flex-end;
   margin-top: 1.5rem;
 }
 
-/* Tabella */
 .table {
   background-color: white;
   width: 100%;
 }
 
-/* Bottoni circolari */
 .circle, .circleArrow {
   width: 60px;
   height: 60px;
@@ -243,7 +233,6 @@ export default {
   font-size: 25px;
 }
 
-/* Loader */
 .loader-fullscreen {
   display: flex;
   justify-content: center;

@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import { request } from '../utils'
 
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
 export const useLoginStore = defineStore('login', () => {
   async function log(mail, password) {
     const payload = {
@@ -8,7 +11,7 @@ export const useLoginStore = defineStore('login', () => {
       userpwd: password.value
     }
 
-    const res = await request('TryToLog', payload)
+    const res = await request('TryToLog', payload) //payload è oggetto json
 
     return res
   }
@@ -19,7 +22,7 @@ export const useLoginStore = defineStore('login', () => {
       role: role.value
     }
 
-    const res = await request('updatePermissions', payload)
+    const res = await request('updatePermissions', payload) //payload è oggetto json
 
     return res
   }
@@ -39,7 +42,7 @@ export const useLoginStore = defineStore('login', () => {
   }
 
   async function fetchAllUsers() {
-    const res = await request('returnAllUsers', {})
+    const res = await request('returnAllUsers', {}) //payload è oggetto json
 
     return res
   }
@@ -59,7 +62,7 @@ export const useLoginStore = defineStore('login', () => {
     const payload = {
       eDBId: eDBId
     }
-    const res = await request('recuperaDatiEventi', payload)
+    const res = await request('recuperaDatiEventi', payload) //payload è oggetto json
 
     return res
   }
@@ -70,6 +73,7 @@ export const useLoginStore = defineStore('login', () => {
     return res
   }
 
+  //metodo per la clonazione dell'openDay
   async function transmitOpendayData(
     idTemplate,
     idFolderOpenday,
@@ -91,18 +95,19 @@ export const useLoginStore = defineStore('login', () => {
       isPresente: pres.value
     }
 
-    const res = await request('cloneOpen', payload)
+    const res = await request('cloneOpen', payload) //payload è oggetto json
 
     return res
   }
 
+  //metodo per la clonazione del ministage
   async function transmitMinistageData(idTemplate, idFolder, date, nrProg, maxPren, db) {
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
       idFolderMini: idFolder.value,
       data: date.value,
-      prog: nrProg.value,
-      nrMaxPren: maxPren.value,
+      prog: nrProg.value, //numero progressivo minstage
+      nrMaxPren: maxPren.value, //array [nrIA, nrBI, nrAB]
       db: db.value
     }
 
@@ -111,6 +116,7 @@ export const useLoginStore = defineStore('login', () => {
     return res
   }
 
+  //metodo per la clonazione del summerStage
   async function transmitSummerStageData(
     idTemplate,
     idFolderSummerStage,
@@ -122,8 +128,8 @@ export const useLoginStore = defineStore('login', () => {
     const payload = {
       idTemplatePrenotazioni: idTemplate.value,
       idFolderSummer: idFolderSummerStage.value,
-      nrMaxPren: maxPren.value,
-      date: date.value,
+      nrMaxPren: maxPren.value, //array [nrMaxLabInfo, nrMaxLabAuto, nrMaxLabBio]
+      date: date.value, //array ['giovedì 13 giugno', ...]
       prog: progressive.value,
       db: db.value
     }
@@ -191,26 +197,27 @@ export const useLoginStore = defineStore('login', () => {
     return await request('getAllDates', payload)
   }
 
-  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine, condividiConTutti) {
+  //jessica   
+  async function datiNuovoImpegno(nome, descrizione, dataInizio, dataFine, condividi) {
     const payload = {
       nome: nome,
       descrizione: descrizione,
       dataInizio: dataInizio,
       dataFine: dataFine,
-      condividiConTutti: condividiConTutti
+      condividiConTutti: condividi
     }
 
     return await request('creaImpegno', payload)
   }
 
-  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex, condividiConTutti) {
+  async function upLoadImpegno(nome, descrizione, dataInizio, dataFine, rowIndex, condividi) {
     const payload = {
       nome: nome,
       descrizione: descrizione,
       dataInizio: dataInizio,
       dataFine: dataFine,
       rowIndex: rowIndex,
-      condividiConTutti: condividiConTutti
+      condividiConTutti: condividi
     }
 
     return await request('upLoadImpegni', payload)
@@ -225,14 +232,19 @@ export const useLoginStore = defineStore('login', () => {
     const payload = { id: idImpegno }
     return await request('condividiImpegno', payload)
   }
+
+  //jessica: fino a qui
+
   
-  async function creaCartelleClassi() {
+async function creaCartelleClassi() {
     const res = await request('createClassFolders');
+    console.log('Class Folder Creation Results:', res); 
     return res;
   }
 
   async function creaCartelleDipartimenti() {
     const res = await request('createDepartmentFolders');
+    console.log('Department Folder Creation Results:', res); 
     return res;
   }
 

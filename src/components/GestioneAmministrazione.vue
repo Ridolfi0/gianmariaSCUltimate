@@ -1,3 +1,4 @@
+<!-- Lisa -->
 <script>
 import { useLoginStore } from '../stores/login'
 
@@ -13,12 +14,12 @@ export default {
             statusStudenti: null, 
             statusDocenti: null,
             statusDocentiClassi: null,
-            statusCreaCartelle: null, // Nuovo stato per il pulsante "Crea Cartelle"
+            statusCreaCartelle: null,
             
             loadingStudenti: false,
             loadingDocenti: false,
             loadingDocentiClassi: false,
-            loadingCreaCartelle: false // Nuovo stato di caricamento per il pulsante "Crea Cartelle"
+            loadingCreaCartelle: false 
         }
     },
     methods: {
@@ -167,7 +168,7 @@ export default {
                             {{ loadingStudenti ? 'Caricamento...' : 'Carica' }}
                         </button>
                         <p v-if="statusStudenti" :class="{'text-success': statusStudenti === 'success', 'text-danger': statusStudenti === 'error'}" class="status-message ms-auto mt-1">
-                            {{ statusStudenti === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                            {{ statusStudenti === 'success' ? 'Dati caricati con successo!' : 'Errore o verifica fallita!' }}
                         </p>
                     </div>
                 </div>
@@ -179,11 +180,10 @@ export default {
                             {{ loadingDocenti ? 'Caricamento...' : 'Carica' }}
                         </button>
                         <p v-if="statusDocenti" :class="{'text-success': statusDocenti === 'success', 'text-danger': statusDocenti === 'error'}" class="status-message ms-auto mt-1">
-                            {{ statusDocenti === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                            {{ statusDocenti === 'success' ? 'Dati caricati con successo!' : 'Errore o verifica fallita!' }}
                         </p>
                     </div>
                 </div>
-                
 
                 <div class="operation-item d-flex align-items-center justify-content-between my-3">
                     <a class="linkModelli" :href="LinkClassiDocentiDaCaricare" target="_blank" rel="noopener noreferrer">Documento per l'inserimento dati delle CLASSI DEI DOCENTI:</a>
@@ -192,7 +192,7 @@ export default {
                             {{ loadingDocentiClassi ? 'Caricamento...' : 'Carica' }}
                         </button>
                         <p v-if="statusDocentiClassi" :class="{'text-success': statusDocentiClassi === 'success', 'text-danger': statusDocentiClassi === 'error'}" class="status-message ms-auto mt-1">
-                            {{ statusDocentiClassi === 'success' ? 'Dati caricati e verificati!' : 'Errore o verifica fallita!' }}
+                            {{ statusDocentiClassi === 'success' ? 'Dati caricati con successo!' : 'Errore o verifica fallita!' }}
                         </p>
                     </div>
                 </div>
@@ -202,7 +202,6 @@ export default {
 </template>
 
 <style scoped>
-/* Stili di base */
 body {
     background-color: #2b2e4a;
     color: #f8f9fa; 
@@ -214,7 +213,6 @@ body {
     padding-right: 1rem;
 }
 
-/* Classi cronologia percorso */
 .breadcrumb-item a {
     color: #fff !important;
     text-decoration: underline !important;
@@ -225,7 +223,6 @@ body {
     color: #fff !important;
 }
 
-/* Titolo della Sezione Principale */
 .section-title {
     color: #e0f7fa;
     text-align: center;
@@ -234,7 +231,6 @@ body {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Stile delle Card del Pannello */
 .panel-card {
     background-color: #f8f9fa;
     border-radius: 12px;
@@ -252,7 +248,6 @@ body {
     padding-bottom: 0.75rem;
 }
 
-/* Linea divisoria tra le operazioni */
 .operation-item {
     padding: 0.75rem 0;
     border-bottom: 1px solid #dee2e6; 
@@ -270,7 +265,6 @@ body {
     margin-bottom: 0;
 }
 
-/* Link ai documenti */
 .linkModelli {
     color: #343a40; 
     text-decoration: none;
@@ -284,7 +278,6 @@ body {
     text-decoration: underline;
 }
 
-/* Pulsanti Azzurri  */
 .azzurro-button {
   background: linear-gradient(135deg,rgb(27, 52, 95) 0%,rgb(79, 107, 200) 100%);
   border: none;
@@ -321,13 +314,11 @@ body {
     transform: none;
 }
 
-/* Icone di stato */
 .status-icon {
     margin-left: 0.5rem;
     font-size: 1.8rem !important;
 }
 
-/* Messaggi di stato sotto i bottoni */
 .status-message {
     font-size: 0.95rem;
     margin-top: 0.5rem;
@@ -343,7 +334,6 @@ body {
     color: #dc3545 !important;
 }
 
-/* Rende il testo non selezionabile */
 .unselectable {
     user-select: none; 
 }

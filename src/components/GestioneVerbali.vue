@@ -1,4 +1,3 @@
-
 <script>
 import { useLoginStore } from '../stores/login'
 import { ref } from 'vue'
@@ -155,7 +154,6 @@ body {
     padding-right: 1rem;
 }
 
-/* Classi cronologia percorso */
 .breadcrumb-item a {
     color: #fff !important;
     text-decoration: underline !important;
@@ -166,7 +164,6 @@ body {
     color: #fff !important;
 }
 
-/* Titolo della Sezione Principale */
 .section-title {
     color: #e0f7fa; 
     text-align: center;
@@ -175,7 +172,6 @@ body {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Stile delle Card del Pannello */
 .panel-card {
     background-color: #f8f9fa; 
     border-radius: 12px;
@@ -209,7 +205,6 @@ body {
     margin-bottom: 0;
 }
 
-/* Link ai documenti */
 .linkModelli {
     color: #343a40; 
     text-decoration: none;

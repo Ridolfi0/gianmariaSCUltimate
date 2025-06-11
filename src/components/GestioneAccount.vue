@@ -414,7 +414,6 @@ button {
   
 }
 
-
 .azzurro-button:hover {
   background: linear-gradient(135deg,rgb(43, 56, 110) 0%,rgb(67, 112, 151) 100%);
   box-shadow: 0 6px 14px rgba(0, 159, 255, 0.4);

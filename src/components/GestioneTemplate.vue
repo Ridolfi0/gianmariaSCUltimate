@@ -1,5 +1,4 @@
 <script>
-
 /* eslint-disable vue/require-v-for-key  */
 
 export default {
@@ -9,7 +8,7 @@ export default {
     },
     emits: ["change-status"],
     props: {
-        payload: Array, //array di id da includere
+        payload: Array,
     }
 }
 </script>

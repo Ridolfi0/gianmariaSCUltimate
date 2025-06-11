@@ -15,7 +15,7 @@ export default {
       descrizione: "",
       dataInizio: "",
       dataFine: "",
-      condividiConTutti: false // Checkbox per condividere con tutti
+      condividiConTutti: false 
     }
   },
   methods: {
@@ -28,15 +28,14 @@ export default {
     async dataTrasmission() {
       const loginStore = useLoginStore();
       try {
-        // Controlliamo il valore di 'condividiConTutti' prima di inviarlo
-        console.log("Condividi con tutti:", this.condividiConTutti); // Debug
+        console.log("Condividi con tutti:", this.condividiConTutti); 
 
         const res = await loginStore.datiNuovoImpegno(
           this.nome,
           this.descrizione,
           this.dataInizio,
           this.dataFine,
-          this.condividiConTutti // Passiamo direttamente il valore booleano
+          this.condividiConTutti
         );
         
         if (res.status === "success") {
@@ -55,7 +54,6 @@ export default {
 
 <template>
   <!-- breadcrumb -->
-
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
@@ -65,8 +63,6 @@ export default {
       <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Crea Impegno</li>
     </ol>
   </nav>
-
-  <!-- caption crea(evento) -->
 
   <div class="inLine">
     <div class="circleArrow backArrow margin ms-3">
@@ -80,12 +76,9 @@ export default {
     <label for="condividi">Condividi con tutti</label>
   </div>
 
-  <!-- tutto -->
-
   <div class="container-fluid adapt">
     <div class="row" style="height: 100vh;">
       <div class="col-2"></div>
-      <!-- comincia -->
       <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
         style="height: 90%; background-color: #78c3ce; width: 100vw;">
         <form @submit.prevent="onSubmit" class="fs-1 ms-5">
