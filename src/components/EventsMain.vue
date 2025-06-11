@@ -1,6 +1,6 @@
-Impegno non trovato nel foglio
 <script>
-import { useLoginStore } from '../stores/login'
+import { useLoginStore } from '../stores/login';
+
 export default {
   props: {
     Ruolo: String,
@@ -24,7 +24,11 @@ export default {
         const response = await fetch(
           "https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni"
         );
-        this.tableData = await response.json();
+        const rawData = await response.json();
+        this.tableData = rawData.map(row => ({
+          ...row,
+          CondivisoConTutti: row['Condiviso con tutti'] === true || row['Condiviso con tutti'] === 'TRUE'
+        }));
       } catch (error) {
         console.error("Errore nel caricamento dati:", error);
       } finally {
@@ -40,47 +44,42 @@ export default {
       return this.selectedRows.includes(index);
     },
     async condividiConTutti() {
-      if(this.selectedRows.length === 0) return;
-  const impegni = this.selectedRows.map(i => this.tableData[i]);
-  const loginStore = useLoginStore();
-         
-  try {
-    for(let i = 0; i < impegni.length; i++) {
-      console.log(impegni[i].Id);
-      const res = await loginStore.condividiImpegno(impegni[i].Id); // Assumendo che la colonna ID si chiami così
-      
-      console.log(res.message || "Impegno condiviso con");
-    };
-        alert(result.message || 'Condivisione completata');
+      if (this.selectedRows.length === 0) return;
+      const impegni = this.selectedRows.map(i => this.tableData[i]);
+      const loginStore = useLoginStore();
+
+      try {
+        for (const impegno of impegni) {
+          await loginStore.condividiImpegno(impegno.Id);
+        }
+        alert('Condivisione completata');
+        this.selectedRows = [];
+        await this.fetchData();
       } catch (e) {
         alert('Errore nella condivisione');
         console.error(e);
       }
     },
     async eliminaImpegni() {
-  if(this.selectedRows.length === 0) return;
-  const impegni = this.selectedRows.map(i => this.tableData[i]);
-  const loginStore = useLoginStore();
-         
-  try {
-    for(let i = 0; i < impegni.length; i++) {
-      console.log(impegni[i].Id);
-      const res = await loginStore.deleteImpegno(impegni[i].Id); // Assumendo che la colonna ID si chiami così
-      
-      console.log(res.message || "Impegno eliminato");
-    };
+      if (this.selectedRows.length === 0) return;
+      const impegni = this.selectedRows.map(i => this.tableData[i]);
+      const loginStore = useLoginStore();
 
-    alert("Impegni eliminati correttamente");
-  } catch (e) {
-    alert("Errore nell'eliminazione");
-    console.error(e);
-  }
-}
-
+      try {
+        for (const impegno of impegni) {
+          await loginStore.deleteImpegno(impegno.Id);
+        }
+        alert("Impegni eliminati correttamente");
+        this.selectedRows = [];
+        await this.fetchData();
+      } catch (e) {
+        alert("Errore nell'eliminazione");
+        console.error(e);
+      }
+    }
   }
 };
 </script>
-
 
 <template>
   <div class="fullscreen-wrapper">
@@ -93,7 +92,6 @@ export default {
       </ol>
     </nav>
 
-
     <div class="d-flex align-items-center back-title mb-4">
       <div class="circleArrow backArrow me-2">
         <i class="bi bi-arrow-left small-icon" @click="$emit('change-status', 'home')"></i>
@@ -101,13 +99,11 @@ export default {
       <p class="fs-4 text-white mb-0 ms-3">Impegni</p>
     </div>
 
-
     <div v-if="isLoading" class="loader-fullscreen">
       <div class="cradle-wrap" v-for="n in 3" :key="n">
         <div class="cradle"><div class="sphere"></div></div>
       </div>
     </div>
-
 
     <div v-else class="main-content-wrapper">
       <div class="main-content-area">
@@ -118,19 +114,27 @@ export default {
             </div>
           </div>
 
-
-          <form @submit.prevent="onSubmit">
+          <form @submit.prevent>
             <div class="table-container">
               <table class="table table-striped table-bordered">
                 <thead v-if="tableData.length">
                   <tr>
-                    <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
+                    <th v-for="(value, key) in tableData[0]" :key="key">
+                      <template v-if="key !== 'Condiviso con tutti'">{{ key }}</template>
+                    </th>
+                    <th>Condiviso</th>
                     <th>Seleziona</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(row, index) in tableData" :key="index">
-                    <td v-for="(value, key) in row" :key="key">{{ value }}</td>
+                    <td v-for="(value, key) in row" :key="key">
+                      <template v-if="key !== 'Condiviso con tutti'">{{ value }}</template>
+                    </td>
+                    <td>
+                      <i v-if="row.CondivisoConTutti" class="bi bi-check-circle-fill text-success"></i>
+                      <i v-else class="bi bi-x-circle-fill text-danger"></i>
+                    </td>
                     <td>
                       <input
                         type="checkbox"
@@ -143,16 +147,17 @@ export default {
                 </tbody>
               </table>
 
-
-              <!-- Bottoni in basso a sinistra -->
               <div class="button-bar">
-                <button type="button" :disabled="selectedRows.length === 0" @click="condividiConTutti" class="btn btn-primary me-2"> Condividi con tutti </button>
-                <button type="button" :disabled="selectedRows.length === 0" @click="eliminaImpegni" class="btn btn-danger"> Elimina selezionati </button>
+                <button type="button" class="btn btn-primary me-2" :disabled="selectedRows.length === 0" @click="condividiConTutti">
+                  Condividi con tutti
+                </button>
+                <button type="button" class="btn btn-danger" :disabled="selectedRows.length === 0" @click="eliminaImpegni">
+                  Elimina selezionati
+                </button>
               </div>
             </div>
           </form>
         </div>
-
 
         <div class="right-panel" v-if="Ruolo !== 'viewer'">
           <div class="circle btnAddEvent mb-3" @click="$emit('change-status', 'creaEvento')">
@@ -167,73 +172,52 @@ export default {
   </div>
 </template>
 
-
 <style scoped>
 .fullscreen-wrapper {
   padding: 2rem;
 }
-
-
 .back-title {
   margin-bottom: 1rem;
 }
-
-
 .loader-fullscreen {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 300px;
 }
-
-
 .main-content-wrapper {
   background-color: #78c3ce;
   padding: 1rem;
   border-radius: 10px;
 }
-
-
 .main-content-area {
   display: flex;
   gap: 1.5rem;
 }
-
-
 .left-panel {
   flex: 1;
 }
-
-
 .right-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
-
-
 .refresh-wrapper {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 0.5rem;
 }
-
-
 .table-container {
   background-color: white;
   border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
 }
-
-
 .table {
   background-color: white;
   width: 100%;
 }
-
-
 .circle, .circleArrow {
   width: 60px;
   height: 60px;
@@ -246,33 +230,23 @@ export default {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-
 .circle:hover, .circleArrow:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-
 .small-icon {
   font-size: 25px;
 }
-
-
 .cradle-wrap {
   position: relative;
   animation: turn 3s linear infinite;
 }
-
-
 .cradle {
   margin: 0 auto;
   width: 125px;
   height: 50px;
   position: relative;
 }
-
-
 .sphere {
   background: #266874;
   width: 10px;
@@ -282,36 +256,14 @@ export default {
   top: 0px;
   animation: slide 1s ease-in-out infinite alternate;
 }
-
-
 @keyframes slide {
-  0% {
-    left: 0px;
-    width: 40px;
-    height: 40px;
-    opacity: 1;
-  }
-  100% {
-    left: 70px;
-    top: 12px;
-    width: 25px;
-    height: 25px;
-    opacity: 0.2;
-  }
+  0% { left: 0px; width: 40px; height: 40px; opacity: 1; }
+  100% { left: 70px; top: 12px; width: 25px; height: 25px; opacity: 0.2; }
 }
-
-
 @keyframes turn {
-  0% {
-    transform: rotate(0deg)
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
-
-
-/* Nuovo stile per i bottoni sotto la tabella */
 .button-bar {
   margin-top: 1rem;
   display: flex;
