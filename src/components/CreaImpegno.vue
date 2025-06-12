@@ -1,11 +1,12 @@
-//jessica        
 <script>
-import { useLoginStore } from '../stores/login'
+import { useLoginStore } from '../stores/login';
+
 export default {
   props: {
     eventType: Object,
     Cartelle: Object
   },
+  emits: ['change-status'],
   data() {
     return {
       isLoading: false,
@@ -15,8 +16,8 @@ export default {
       descrizione: "",
       dataInizio: "",
       dataFine: "",
-      condividiConTutti: false 
-    }
+      condividiConTutti: false
+    };
   },
   methods: {
     async onSubmit() {
@@ -28,8 +29,6 @@ export default {
     async dataTrasmission() {
       const loginStore = useLoginStore();
       try {
-        console.log("Condividi con tutti:", this.condividiConTutti); 
-
         const res = await loginStore.datiNuovoImpegno(
           this.nome,
           this.descrizione,
@@ -37,7 +36,6 @@ export default {
           this.dataFine,
           this.condividiConTutti
         );
-        
         if (res.status === "success") {
           this.$emit('change-status', 'gestioneImpegni');
         } else {
@@ -47,20 +45,21 @@ export default {
         alert("Errore di connessione: " + e.message);
       }
     }
-  },
-  emits: ['change-status']
-}
+  }
+};
 </script>
 
 <template>
   <!-- breadcrumb -->
   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-5">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
+      <li class="breadcrumb-item">
+        <a href="#" style="color: #fff" @click="$emit('change-status', 'home')">Home</a>
       </li>
-      <li class="breadcrumb-item active" aria-current="page" style="color: #fff"><a href="#" style="color: #fff"
-          @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a></li>
-      <li class="breadcrumb-item active" aria-current="page" style="color: #fff">Crea Impegno</li>
+      <li class="breadcrumb-item">
+        <a href="#" style="color: #fff" @click="$emit('change-status', 'gestioneImpegni')">Gestione impegni</a>
+      </li>
+      <li class="breadcrumb-item active" style="color: #fff">Crea Impegno</li>
     </ol>
   </nav>
 
@@ -79,34 +78,23 @@ export default {
   <div class="container-fluid adapt">
     <div class="row" style="height: 100vh;">
       <div class="col-2"></div>
-      <div v-if="!this.isLoading" class="col-8 d-flex rounded-4 p-3 rounded-4"
-        style="height: 90%; background-color: #78c3ce; width: 100vw;">
-        <form @submit.prevent="onSubmit" class="fs-1 ms-5">
-        <input v-model="nome" type="text" class="inputFilter form-control mb-3" placeholder="Nome impegno" required>
-        <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required>
-        <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di inizio impegno" required>
-        <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" placeholder="Data e ora di fine impegno" required>
-        <button type="submit" class="azzurro-button" id="btnSalvaImpegno">Salva e aggiungi impegno</button>
+      <div class="col-8 d-flex rounded-4 p-3" style="background-color: #78c3ce; height: auto;">
+        <form @submit.prevent="onSubmit" class="fs-1 w-100">
+          <input v-model="nome" type="text" class="inputFilter form-control mb-3" placeholder="Nome impegno" required />
+          <input v-model="descrizione" type="text" class="inputFilter form-control mb-3" placeholder="Descrizione impegno" required />
+          <input v-model="dataInizio" type="datetime-local" class="inputFilter form-control mb-3" required />
+          <input v-model="dataFine" type="datetime-local" class="inputFilter form-control mb-3" required />
+
+          <button
+            type="submit"
+            class="azzurro-button"
+            id="btnSalvaImpegno"
+            :disabled="isLoading"
+          >
+            {{ isLoading ? 'Creazione in corso...' : 'Salva e aggiungi impegno' }}
+          </button>
         </form>
       </div>
-      <div class="containerC" v-else>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
-        </div>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
-        </div>
-        <div class="cradle-wrap">
-          <div class="cradle">
-            <div class="sphere"></div>
-          </div>
-        </div>
-      </div>
-      <!-- <p class="fs-2 containerC">{{ this.text }}</p>-->
     </div>
   </div>
 </template>

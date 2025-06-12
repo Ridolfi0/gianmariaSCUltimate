@@ -1,4 +1,3 @@
-//jessica   
 <script>
 import { useLoginStore } from '../stores/login'
 
@@ -29,7 +28,6 @@ export default {
         for (let i = 0; i < this.selectedRows.length; i++) {
           const index = this.selectedRows[i];
           const row = this.tableData[index];
-
           const res = await loginStore.upLoadImpegno(
             row.Titolo,
             row.Descrizione,
@@ -72,7 +70,6 @@ export default {
   emits: ['change-status']
 }
 </script>
-
 <template>
   <div class="fullscreen-wrapper">
     <!-- Breadcrumb -->
@@ -101,48 +98,47 @@ export default {
         <label for="condividi">Condividi con tutti</label>
       </div>
 
-      <div v-if="!isLoading">
-        <form @submit.prevent="onSubmit">
-          <div class="table-container">
-            <table class="table table-striped table-bordered">
-              <thead v-if="tableData.length">
-                <tr>
-                  <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
-                  <th>Seleziona</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, index) in tableData" :key="index">
-                  <td v-for="(value, key) in row" :key="key">{{ value }}</td>
-                  <td>
-                    <input 
-                      type="checkbox" 
-                      :checked="isRowSelected(index)" 
-                      @change="toggleRowSelection(index)" 
-                      class="checkbox-select"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="upload-button-wrapper">
-            <div class="circle btnUpLoadEvent" @click="onSubmit">
-              <i class="bi bi-upload small-icon"></i>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <div v-else class="loader-fullscreen">
-        <div class="cradle-wrap" v-for="n in 3" :key="n">
-          <div class="cradle"><div class="sphere"></div></div>
+      <form @submit.prevent="onSubmit">
+        <div class="table-container" v-if="tableData.length">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th v-for="(value, key) in tableData[0]" :key="key">{{ key }}</th>
+                <th>Seleziona</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, index) in tableData" :key="index">
+                <td v-for="(value, key) in row" :key="key">{{ value }}</td>
+                <td>
+                  <input 
+                    type="checkbox" 
+                    :checked="isRowSelected(index)" 
+                    @change="toggleRowSelection(index)" 
+                    class="checkbox-select"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
+
+        <div v-else class="text-white">Caricamento dati...</div>
+
+        <div class="upload-button-wrapper mt-4">
+          <button
+            type="submit"
+            class="azzurro-button"
+            :disabled="isLoading || selectedRows.length === 0"
+          >
+            {{ isLoading ? "Caricamento in corso..." : "Carica impegni selezionati" }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .fullscreen-wrapper {

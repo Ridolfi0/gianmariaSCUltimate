@@ -1,5 +1,6 @@
 <script>
 import { useLoginStore } from '../stores/login'
+
 export default {
   props: {
     Ruolo: String,
@@ -10,7 +11,11 @@ export default {
     return {
       tableData: [],
       isLoading: true,
-      selectedRows: []
+      selectedRows: [],
+      loadingCondividi: false,
+      statusCondividi: null,
+      loadingElimina: false,
+      statusElimina: null
     };
   },
   created() {
@@ -20,9 +25,7 @@ export default {
     async fetchData() {
       this.isLoading = true;
       try {
-        const response = await fetch(
-          "https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni"
-        );
+        const response = await fetch("https://opensheet.elk.sh/1nLs1QG_mIVCHyyKo1FwhZy5aTBui5Iyr9ETNAney5Tg/Impegni");
         this.tableData = await response.json();
       } catch (error) {
         console.error("Errore nel caricamento dati:", error);
@@ -39,47 +42,52 @@ export default {
       return this.selectedRows.includes(index);
     },
     async condividiConTutti() {
-      if(this.selectedRows.length === 0) return;
-  const impegni = this.selectedRows.map(i => this.tableData[i]);
-  const loginStore = useLoginStore();
-         
-  try {
-    for(let i = 0; i < impegni.length; i++) {
-      console.log(impegni[i].Id);
-      const res = await loginStore.condividiImpegno(impegni[i].Id);
-      
-      console.log(res.message || "Impegno condiviso con");
-    };
-        alert('Condivisione completata');
+      if (this.selectedRows.length === 0) return;
+
+      this.loadingCondividi = true;
+      this.statusCondividi = null;
+
+      const impegni = this.selectedRows.map(i => this.tableData[i]);
+      const loginStore = useLoginStore();
+
+      try {
+        for (let i = 0; i < impegni.length; i++) {
+          await loginStore.condividiImpegno(impegni[i].Id);
+        }
+        this.statusCondividi = 'success';
       } catch (e) {
-        alert('Errore nella condivisione');
         console.error(e);
+        this.statusCondividi = 'error';
+      } finally {
+        this.loadingCondividi = false;
       }
     },
     async eliminaImpegni() {
-  if(this.selectedRows.length === 0) return;
-  const impegni = this.selectedRows.map(i => this.tableData[i]);
-  const loginStore = useLoginStore();
-         
-  try {
-    for(let i = 0; i < impegni.length; i++) {
-      console.log(impegni[i].Id);
-      const res = await loginStore.deleteImpegno(impegni[i].Id); 
-      
-      console.log(res.message || "Impegno eliminato");
-    };
+      if (this.selectedRows.length === 0) return;
 
-    alert("Impegni eliminati correttamente");
-  } catch (e) {
-    alert("Errore nell'eliminazione");
-    console.error(e);
-  }
-}
+      this.loadingElimina = true;
+      this.statusElimina = null;
 
+      const impegni = this.selectedRows.map(i => this.tableData[i]);
+      const loginStore = useLoginStore();
+
+      try {
+        for (let i = 0; i < impegni.length; i++) {
+          await loginStore.deleteImpegno(impegni[i].Id);
+        }
+        this.statusElimina = 'success';
+        this.selectedRows = [];
+        await this.fetchData();
+      } catch (e) {
+        console.error(e);
+        this.statusElimina = 'error';
+      } finally {
+        this.loadingElimina = false;
+      }
+    }
   }
 };
 </script>
-
 
 <template>
   <div class="fullscreen-wrapper">
@@ -138,9 +146,30 @@ export default {
                 </tbody>
               </table>
 
-              <div class="button-bar">
-                <button type="button" :disabled="selectedRows.length === 0" @click="condividiConTutti" class="btn btn-primary me-2"> Condividi con tutti </button>
-                <button type="button" :disabled="selectedRows.length === 0" @click="eliminaImpegni" class="btn btn-danger"> Elimina selezionati </button>
+              <div class="button-bar mt-3">
+                <button
+                  type="button"
+                  class="btn btn-primary me-2"
+                  :disabled="selectedRows.length === 0 || loadingCondividi"
+                  @click="condividiConTutti"
+                >
+                  {{ loadingCondividi ? 'Condivisione...' : 'Condividi con tutti' }}
+                </button>
+                <span v-if="statusCondividi" :class="{'text-success': statusCondividi === 'success', 'text-danger': statusCondividi === 'error'}">
+                  {{ statusCondividi === 'success' ? 'Condivisione completata!' : 'Errore nella condivisione!' }}
+                </span>
+
+                <button
+                  type="button"
+                  class="btn btn-danger ms-3"
+                  :disabled="selectedRows.length === 0 || loadingElimina"
+                  @click="eliminaImpegni"
+                >
+                  {{ loadingElimina ? 'Eliminazione...' : 'Elimina selezionati' }}
+                </button>
+                <span v-if="statusElimina" :class="{'text-success': statusElimina === 'success', 'text-danger': statusElimina === 'error'}" class="ms-2">
+                  {{ statusElimina === 'success' ? 'Impegni eliminati!' : 'Errore nell\'eliminazione!' }}
+                </span>
               </div>
             </div>
           </form>
@@ -158,7 +187,6 @@ export default {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .fullscreen-wrapper {
